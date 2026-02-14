@@ -1,0 +1,645 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:2:1-49:12
+INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:2:1-49:12
+INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:2:1-49:12
+INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:2:1-49:12
+MERGED from [androidx.camera:camera-video:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/9045c57fe81c98a2a57b077719be8547/transformed/camera-video-1.4.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:17:1-36:12
+MERGED from [androidx.camera:camera-view:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/e9ab00d73518f5f4215e4b3d52d22a6e/transformed/camera-view-1.4.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.camera:camera-lifecycle:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/4cc59837e6d9cf5e3144cb6ba37e1876/transformed/camera-lifecycle-1.4.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:17:1-36:12
+MERGED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/64c182ee7a9001e567743f91c5b4a88c/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.navigation:navigation-common:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d19e96b88bea1e8f8cc2f50a35a2dfdf/transformed/navigation-common-2.8.5/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-runtime:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0d4f0e5c178534aa96dd55baa378eee/transformed/navigation-runtime-2.8.5/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-common-ktx:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/99d0af3fba93ca5b414512c3950f2549/transformed/navigation-common-ktx-2.8.5/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/16eb6da145f22fe5fde18743e3853d45/transformed/navigation-runtime-ktx-2.8.5/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigation:navigation-compose:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/9847e6519d4243ca270b8c51572f6d68/transformed/navigation-compose-2.8.5/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.mlkit:barcode-scanning:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/ca81f2ad9843120cf4438fcd5e9ab926/transformed/barcode-scanning-17.3.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:2:1-18:12
+MERGED from [com.google.mlkit:barcode-scanning-common:17.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/327b8af543b5fb5620dd732cd9baf391/transformed/barcode-scanning-common-17.0.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:2:1-18:12
+MERGED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:2:1-26:12
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d54ce0aa0e4769df67ae58d3f4be839d/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/bb04e5da1368a655d2a240c3046b5278/transformed/appcompat-1.6.1/AndroidManifest.xml:17:1-22:12
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.mlkit:vision-interfaces:16.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/05364ad2eb6edea8f5542b2451a6cb29/transformed/vision-interfaces-16.3.0/AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1e104fd889dea5aa4b590f735805ff64/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:2:1-5:12
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d9bfd9d785f6b418dbcb1a45286e1f71/transformed/play-services-basement-18.4.0/AndroidManifest.xml:2:1-9:12
+MERGED from [androidx.fragment:fragment:1.3.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/79efaf823619e953480b3370511075df/transformed/fragment-1.3.6/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.activity:activity:1.9.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/9452d4b11d53b33389aa47b8b80984eb/transformed/activity-1.9.3/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.activity:activity-ktx:1.9.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/527781fca9c43419be83fde80c3637a5/transformed/activity-ktx-1.9.3/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material3:material3-android:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/70c744d840790d0cfdcb0aeb03a9e317/transformed/material3-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.activity:activity-compose:1.9.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/ddfd20e0639ec29a165d5390f27c2218/transformed/activity-compose-1.9.3/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-ripple-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/fe143e51f51eac7e2cec0ac503e508a0/transformed/material-ripple-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/c460369c30abeaeac95f4e90c17a291e/transformed/foundation-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/c90226414762739f13acb7826f2aa3c1/transformed/foundation-layout-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.animation:animation-core-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/486197b934924eaa6c5bb75fb85d3798/transformed/animation-core-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.animation:animation-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/ff22543a05df656a7b69ac6594aa51cc/transformed/animation-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-util-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/4ec567ec4213932a69abf1d4a3b5d640/transformed/ui-util-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-unit-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/6de3ac2c1f562e8f1e104a37dd24e6f7/transformed/ui-unit-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-text-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/bca89f1ebde9bf2d50ca48aea25e3b27/transformed/ui-text-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-geometry-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/06e87fa920920953cb7f0d1e7b9e2844/transformed/ui-geometry-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/72cd99cabb7fb44e896106632f85d307/transformed/ui-tooling-preview-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.ui:ui-graphics-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/109a9e3151906e03d77417cb7c8a9b04/transformed/ui-graphics-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/b82c55d85e3fc92536cbb821c55469bf/transformed/emoji2-views-helper-1.3.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/384f664cfefb7aa342406d5fc7e438b2/transformed/lifecycle-livedata-core-ktx-2.8.7/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.loader:loader:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/0a365725466f94611d48194a044812f5/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/7885bed8b5beeb1df128da6f6796ef45/transformed/lifecycle-viewmodel-2.8.7/AndroidManifest.xml:2:1-5:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/c7f5aa81c9757cf5a9458531833bb245/transformed/lifecycle-viewmodel-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/910e7b077e18dc64e863365c5950e895/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/9edb6df4c0c9f89974f4ad3a29f8916e/transformed/savedstate-1.2.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/cb303c5e526810e2393b12723f7ea30e/transformed/lifecycle-runtime-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/aa4cc4fc6ad46bfe4d36508f1daca79b/transformed/lifecycle-livedata-2.8.7/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a05b3d7e56b1403848c17d88c5777e49/transformed/lifecycle-viewmodel-savedstate-2.8.7/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/77207dbf326037844372a90591aea4d0/transformed/lifecycle-viewmodel-ktx-2.8.7/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/955cb98bb0d796108b3c077b9282c329/transformed/lifecycle-livedata-core-2.8.7/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/b251a4e475c542c9d112b29440efa27e/transformed/lifecycle-runtime-compose-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a7a84f367038b1055c8118e278c53e30/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/02a5c7d4341b568293cc7def8e07f1d3/transformed/lifecycle-viewmodel-compose-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-icons-extended-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/6ad8f6626b0f77d792c158bee96e1d8f/transformed/material-icons-extended-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-icons-core-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/c3229257a0b13c50e98fac1aaf72ca36/transformed/material-icons-core-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/622fa8ad737552dee4c2cd488e940f6b/transformed/ui-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.autofill:autofill:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/35fbe5aa4e5509d5998e3409e2010276/transformed/autofill-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.graphics:graphics-path:1.0.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/6fc24a798f2106aef21adde4c0c1e4a8/transformed/graphics-path-1.0.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/e4214d589fa7ccb2dba5205acf13ec01/transformed/drawerlayout-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1e3b81ca761a56abe537cf4527ecb51f/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/421ee45e82f6e5ba449f0149b87fd7de/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/4ce175bd0898dc04d2f873b4952d7a8d/transformed/vectordrawable-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.customview:customview:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/758818c99e6bb8344019a55bdb9f6e57/transformed/customview-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:17:1-30:12
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/fdc530e33ccc22d9fed429c09cb2f04a/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:17:1-23:12
+MERGED from [androidx.core:core-ktx:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d6805e45687c589a7b90c54bf4636a00/transformed/core-ktx-1.15.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:17:1-31:12
+MERGED from [androidx.room:room-ktx:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/040eb3d070757f4404110763f24bb527/transformed/room-ktx-2.7.0-alpha01/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.datastore:datastore-core-android:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/61b55678271fa1698975f306f57b3e92/transformed/datastore-core-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.datastore:datastore-android:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/229ec3e475aa93cd9495441326fe5892/transformed/datastore-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.datastore:datastore-preferences-android:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/223f8d43837e1977d44e45e9e71db352/transformed/datastore-preferences-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/34eb97f14bb5a61b35cc012f686ffd9c/transformed/runtime-saveable-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.runtime:runtime-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/99f48cde3d4f9554736a878980f85657/transformed/runtime-release/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:17:1-55:12
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/f62700e2c5fd927fc46dfad2a054e645/transformed/startup-runtime-1.1.1/AndroidManifest.xml:17:1-33:12
+MERGED from [androidx.tracing:tracing:1.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/b6bb6709981b9ed2d6867e0e5471d6b4/transformed/tracing-1.2.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.tracing:tracing-ktx:1.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/40c32501522cde77bb024635aca32c59/transformed/tracing-ktx-1.2.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/ad3ac349392172f934e34f3ccac886af/transformed/annotation-experimental-1.4.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.security:security-crypto:1.1.0-alpha06] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1c56f7475588fe25fca90506b466f699/transformed/security-crypto-1.1.0-alpha06/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/11d89493354b878ede5b99b1eb863e1e/transformed/interpolator-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/76077b52e3a116be2e6c347eeb2375cc/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1cec0a752e680f65cd316a03df4dc556/transformed/core-runtime-2.2.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.exifinterface:exifinterface:1.3.2] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/20aa3d2a0311b01468816fe1f9a1ee22/transformed/exifinterface-1.3.2/AndroidManifest.xml:17:1-24:12
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:15:1-38:12
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:15:1-41:12
+MERGED from [com.google.android.datatransport:transport-api:2.2.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/0a38148da69b804772c212021c27de83/transformed/transport-api-2.2.1/AndroidManifest.xml:15:1-22:12
+MERGED from [com.google.firebase:firebase-components:16.1.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/6a7a309b2e0842aba383721d6d81c295/transformed/firebase-components-16.1.0/AndroidManifest.xml:15:1-23:12
+MERGED from [com.google.firebase:firebase-encoders-json:17.1.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/886713a29551e56a5f3449d09baf7a0c/transformed/firebase-encoders-json-17.1.0/AndroidManifest.xml:15:1-23:12
+MERGED from [androidx.sqlite:sqlite-framework-android:2.5.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/2a0632653d6f89c51c9d63dbb9970d3e/transformed/sqlite-framework-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.sqlite:sqlite-android:2.5.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/44974c9019ce7989a3f70abae3b9f6de/transformed/sqlite-release/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/16ee8910bcca73b5c26a724108c6f2ef/transformed/cursoradapter-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [com.google.android.odml:image:1.0.0-beta1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/444a90fffa5bb644ad7a4ec304aa33e3/transformed/image-1.0.0-beta1/AndroidManifest.xml:2:1-9:12
+	package
+		INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml
+	xmlns:tools
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:3:5-51
+	android:versionCode
+		INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:6:5-67
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:26:5-67
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:26:5-67
+	android:name
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:6:22-64
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:7:5-79
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:25:5-79
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:25:5-79
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:22:5-79
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:22:5-79
+	android:name
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:7:22-76
+uses-permission#android.permission.CAMERA
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:10:5-65
+	android:name
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:10:22-62
+uses-feature#android.hardware.camera
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:11:5-85
+	android:required
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:11:58-82
+	android:name
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:11:19-57
+uses-permission#android.permission.USE_BIOMETRIC
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:14:5-72
+MERGED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/64c182ee7a9001e567743f91c5b4a88c/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:22:5-72
+MERGED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/64c182ee7a9001e567743f91c5b4a88c/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:22:5-72
+	android:name
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:14:22-69
+application
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:16:5-48:19
+INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:16:5-48:19
+MERGED from [androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:23:5-34:19
+MERGED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:8:5-16:19
+MERGED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:8:5-16:19
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:8:5-16:19
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:8:5-16:19
+MERGED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:8:5-24:19
+MERGED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:8:5-24:19
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:4:5-6:19
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:4:5-6:19
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1e104fd889dea5aa4b590f735805ff64/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:4:5-20
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1e104fd889dea5aa4b590f735805ff64/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:4:5-20
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d9bfd9d785f6b418dbcb1a45286e1f71/transformed/play-services-basement-18.4.0/AndroidManifest.xml:5:5-7:19
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d9bfd9d785f6b418dbcb1a45286e1f71/transformed/play-services-basement-18.4.0/AndroidManifest.xml:5:5-7:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:28:5-89
+MERGED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:28:5-89
+MERGED from [androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:23:5-29:19
+MERGED from [androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:23:5-29:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/f62700e2c5fd927fc46dfad2a054e645/transformed/startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/f62700e2c5fd927fc46dfad2a054e645/transformed/startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/76077b52e3a116be2e6c347eeb2375cc/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/76077b52e3a116be2e6c347eeb2375cc/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:28:5-36:19
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:28:5-36:19
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:25:5-39:19
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:25:5-39:19
+MERGED from [com.google.android.odml:image:1.0.0-beta1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/444a90fffa5bb644ad7a4ec304aa33e3/transformed/image-1.0.0-beta1/AndroidManifest.xml:7:5-20
+MERGED from [com.google.android.odml:image:1.0.0-beta1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/444a90fffa5bb644ad7a4ec304aa33e3/transformed/image-1.0.0-beta1/AndroidManifest.xml:7:5-20
+	android:extractNativeLibs
+		INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:28:18-86
+	android:supportsRtl
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:24:9-35
+	android:label
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:22:9-41
+	android:fullBackupContent
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:20:9-42
+	android:roundIcon
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:23:9-54
+	tools:targetApi
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:27:9-29
+	android:icon
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:21:9-43
+	android:allowBackup
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:18:9-36
+	android:theme
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:25:9-52
+	android:networkSecurityConfig
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:26:9-69
+	android:dataExtractionRules
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:19:9-65
+	android:name
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:17:9-36
+activity#com.meowcoin.wallet.MainActivity
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:29:9-47:20
+	android:windowSoftInputMode
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:32:13-55
+	android:exported
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:31:13-36
+	android:theme
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:33:13-56
+	android:name
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:30:13-41
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:35:13-38:29
+action#android.intent.action.MAIN
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:36:17-69
+	android:name
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:36:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:37:17-77
+	android:name
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:37:27-74
+intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:scheme:meowcoin
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:41:13-46:29
+action#android.intent.action.VIEW
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:42:17-69
+	android:name
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:42:25-66
+category#android.intent.category.DEFAULT
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:43:17-76
+	android:name
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:43:27-73
+category#android.intent.category.BROWSABLE
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:44:17-78
+	android:name
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:44:27-75
+data
+ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:45:17-51
+	android:scheme
+		ADDED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:45:23-48
+uses-sdk
+INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml
+INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml
+MERGED from [androidx.camera:camera-video:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/9045c57fe81c98a2a57b077719be8547/transformed/camera-video-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-video:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/9045c57fe81c98a2a57b077719be8547/transformed/camera-video-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.camera:camera-view:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/e9ab00d73518f5f4215e4b3d52d22a6e/transformed/camera-view-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-view:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/e9ab00d73518f5f4215e4b3d52d22a6e/transformed/camera-view-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-lifecycle:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/4cc59837e6d9cf5e3144cb6ba37e1876/transformed/camera-lifecycle-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-lifecycle:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/4cc59837e6d9cf5e3144cb6ba37e1876/transformed/camera-lifecycle-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/64c182ee7a9001e567743f91c5b4a88c/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:20:5-44
+MERGED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/64c182ee7a9001e567743f91c5b4a88c/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-common:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d19e96b88bea1e8f8cc2f50a35a2dfdf/transformed/navigation-common-2.8.5/AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-common:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d19e96b88bea1e8f8cc2f50a35a2dfdf/transformed/navigation-common-2.8.5/AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-runtime:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0d4f0e5c178534aa96dd55baa378eee/transformed/navigation-runtime-2.8.5/AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-runtime:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0d4f0e5c178534aa96dd55baa378eee/transformed/navigation-runtime-2.8.5/AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-common-ktx:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/99d0af3fba93ca5b414512c3950f2549/transformed/navigation-common-ktx-2.8.5/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-common-ktx:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/99d0af3fba93ca5b414512c3950f2549/transformed/navigation-common-ktx-2.8.5/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/16eb6da145f22fe5fde18743e3853d45/transformed/navigation-runtime-ktx-2.8.5/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/16eb6da145f22fe5fde18743e3853d45/transformed/navigation-runtime-ktx-2.8.5/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-compose:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/9847e6519d4243ca270b8c51572f6d68/transformed/navigation-compose-2.8.5/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-compose:2.8.5] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/9847e6519d4243ca270b8c51572f6d68/transformed/navigation-compose-2.8.5/AndroidManifest.xml:5:5-44
+MERGED from [com.google.mlkit:barcode-scanning:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/ca81f2ad9843120cf4438fcd5e9ab926/transformed/barcode-scanning-17.3.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.mlkit:barcode-scanning:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/ca81f2ad9843120cf4438fcd5e9ab926/transformed/barcode-scanning-17.3.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:6:5-44
+MERGED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:6:5-44
+MERGED from [com.google.mlkit:barcode-scanning-common:17.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/327b8af543b5fb5620dd732cd9baf391/transformed/barcode-scanning-common-17.0.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.mlkit:barcode-scanning-common:17.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/327b8af543b5fb5620dd732cd9baf391/transformed/barcode-scanning-common-17.0.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:6:5-44
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:6:5-44
+MERGED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:6:5-44
+MERGED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:6:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d54ce0aa0e4769df67ae58d3f4be839d/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d54ce0aa0e4769df67ae58d3f4be839d/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/bb04e5da1368a655d2a240c3046b5278/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/bb04e5da1368a655d2a240c3046b5278/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.mlkit:vision-interfaces:16.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/05364ad2eb6edea8f5542b2451a6cb29/transformed/vision-interfaces-16.3.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.mlkit:vision-interfaces:16.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/05364ad2eb6edea8f5542b2451a6cb29/transformed/vision-interfaces-16.3.0/AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1e104fd889dea5aa4b590f735805ff64/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1e104fd889dea5aa4b590f735805ff64/transformed/play-services-tasks-18.2.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d9bfd9d785f6b418dbcb1a45286e1f71/transformed/play-services-basement-18.4.0/AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-basement:18.4.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d9bfd9d785f6b418dbcb1a45286e1f71/transformed/play-services-basement-18.4.0/AndroidManifest.xml:3:5-44
+MERGED from [androidx.fragment:fragment:1.3.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/79efaf823619e953480b3370511075df/transformed/fragment-1.3.6/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.3.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/79efaf823619e953480b3370511075df/transformed/fragment-1.3.6/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.activity:activity:1.9.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/9452d4b11d53b33389aa47b8b80984eb/transformed/activity-1.9.3/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.9.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/9452d4b11d53b33389aa47b8b80984eb/transformed/activity-1.9.3/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity-ktx:1.9.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/527781fca9c43419be83fde80c3637a5/transformed/activity-ktx-1.9.3/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.9.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/527781fca9c43419be83fde80c3637a5/transformed/activity-ktx-1.9.3/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material3:material3-android:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/70c744d840790d0cfdcb0aeb03a9e317/transformed/material3-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material3:material3-android:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/70c744d840790d0cfdcb0aeb03a9e317/transformed/material3-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity-compose:1.9.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/ddfd20e0639ec29a165d5390f27c2218/transformed/activity-compose-1.9.3/AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-compose:1.9.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/ddfd20e0639ec29a165d5390f27c2218/transformed/activity-compose-1.9.3/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-ripple-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/fe143e51f51eac7e2cec0ac503e508a0/transformed/material-ripple-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-ripple-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/fe143e51f51eac7e2cec0ac503e508a0/transformed/material-ripple-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/c460369c30abeaeac95f4e90c17a291e/transformed/foundation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/c460369c30abeaeac95f4e90c17a291e/transformed/foundation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/c90226414762739f13acb7826f2aa3c1/transformed/foundation-layout-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/c90226414762739f13acb7826f2aa3c1/transformed/foundation-layout-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/486197b934924eaa6c5bb75fb85d3798/transformed/animation-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/486197b934924eaa6c5bb75fb85d3798/transformed/animation-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/ff22543a05df656a7b69ac6594aa51cc/transformed/animation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/ff22543a05df656a7b69ac6594aa51cc/transformed/animation-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/4ec567ec4213932a69abf1d4a3b5d640/transformed/ui-util-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/4ec567ec4213932a69abf1d4a3b5d640/transformed/ui-util-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/6de3ac2c1f562e8f1e104a37dd24e6f7/transformed/ui-unit-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/6de3ac2c1f562e8f1e104a37dd24e6f7/transformed/ui-unit-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/bca89f1ebde9bf2d50ca48aea25e3b27/transformed/ui-text-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/bca89f1ebde9bf2d50ca48aea25e3b27/transformed/ui-text-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/06e87fa920920953cb7f0d1e7b9e2844/transformed/ui-geometry-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/06e87fa920920953cb7f0d1e7b9e2844/transformed/ui-geometry-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/72cd99cabb7fb44e896106632f85d307/transformed/ui-tooling-preview-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/72cd99cabb7fb44e896106632f85d307/transformed/ui-tooling-preview-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/109a9e3151906e03d77417cb7c8a9b04/transformed/ui-graphics-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/109a9e3151906e03d77417cb7c8a9b04/transformed/ui-graphics-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/b82c55d85e3fc92536cbb821c55469bf/transformed/emoji2-views-helper-1.3.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/b82c55d85e3fc92536cbb821c55469bf/transformed/emoji2-views-helper-1.3.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/384f664cfefb7aa342406d5fc7e438b2/transformed/lifecycle-livedata-core-ktx-2.8.7/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/384f664cfefb7aa342406d5fc7e438b2/transformed/lifecycle-livedata-core-ktx-2.8.7/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:21:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/0a365725466f94611d48194a044812f5/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/0a365725466f94611d48194a044812f5/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/7885bed8b5beeb1df128da6f6796ef45/transformed/lifecycle-viewmodel-2.8.7/AndroidManifest.xml:4:5-43
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/7885bed8b5beeb1df128da6f6796ef45/transformed/lifecycle-viewmodel-2.8.7/AndroidManifest.xml:4:5-43
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/c7f5aa81c9757cf5a9458531833bb245/transformed/lifecycle-viewmodel-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/c7f5aa81c9757cf5a9458531833bb245/transformed/lifecycle-viewmodel-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/910e7b077e18dc64e863365c5950e895/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/910e7b077e18dc64e863365c5950e895/transformed/savedstate-ktx-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/9edb6df4c0c9f89974f4ad3a29f8916e/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/9edb6df4c0c9f89974f4ad3a29f8916e/transformed/savedstate-1.2.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/cb303c5e526810e2393b12723f7ea30e/transformed/lifecycle-runtime-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/cb303c5e526810e2393b12723f7ea30e/transformed/lifecycle-runtime-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/aa4cc4fc6ad46bfe4d36508f1daca79b/transformed/lifecycle-livedata-2.8.7/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/aa4cc4fc6ad46bfe4d36508f1daca79b/transformed/lifecycle-livedata-2.8.7/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a05b3d7e56b1403848c17d88c5777e49/transformed/lifecycle-viewmodel-savedstate-2.8.7/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a05b3d7e56b1403848c17d88c5777e49/transformed/lifecycle-viewmodel-savedstate-2.8.7/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/77207dbf326037844372a90591aea4d0/transformed/lifecycle-viewmodel-ktx-2.8.7/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/77207dbf326037844372a90591aea4d0/transformed/lifecycle-viewmodel-ktx-2.8.7/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/955cb98bb0d796108b3c077b9282c329/transformed/lifecycle-livedata-core-2.8.7/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/955cb98bb0d796108b3c077b9282c329/transformed/lifecycle-livedata-core-2.8.7/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/b251a4e475c542c9d112b29440efa27e/transformed/lifecycle-runtime-compose-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/b251a4e475c542c9d112b29440efa27e/transformed/lifecycle-runtime-compose-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a7a84f367038b1055c8118e278c53e30/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a7a84f367038b1055c8118e278c53e30/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/02a5c7d4341b568293cc7def8e07f1d3/transformed/lifecycle-viewmodel-compose-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/02a5c7d4341b568293cc7def8e07f1d3/transformed/lifecycle-viewmodel-compose-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-extended-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/6ad8f6626b0f77d792c158bee96e1d8f/transformed/material-icons-extended-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-extended-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/6ad8f6626b0f77d792c158bee96e1d8f/transformed/material-icons-extended-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-core-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/c3229257a0b13c50e98fac1aaf72ca36/transformed/material-icons-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-core-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/c3229257a0b13c50e98fac1aaf72ca36/transformed/material-icons-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/622fa8ad737552dee4c2cd488e940f6b/transformed/ui-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/622fa8ad737552dee4c2cd488e940f6b/transformed/ui-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.autofill:autofill:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/35fbe5aa4e5509d5998e3409e2010276/transformed/autofill-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.autofill:autofill:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/35fbe5aa4e5509d5998e3409e2010276/transformed/autofill-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.graphics:graphics-path:1.0.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/6fc24a798f2106aef21adde4c0c1e4a8/transformed/graphics-path-1.0.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.graphics:graphics-path:1.0.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/6fc24a798f2106aef21adde4c0c1e4a8/transformed/graphics-path-1.0.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/e4214d589fa7ccb2dba5205acf13ec01/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/e4214d589fa7ccb2dba5205acf13ec01/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1e3b81ca761a56abe537cf4527ecb51f/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1e3b81ca761a56abe537cf4527ecb51f/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/421ee45e82f6e5ba449f0149b87fd7de/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/421ee45e82f6e5ba449f0149b87fd7de/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/4ce175bd0898dc04d2f873b4952d7a8d/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/4ce175bd0898dc04d2f873b4952d7a8d/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.customview:customview:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/758818c99e6bb8344019a55bdb9f6e57/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/758818c99e6bb8344019a55bdb9f6e57/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/fdc530e33ccc22d9fed429c09cb2f04a/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/fdc530e33ccc22d9fed429c09cb2f04a/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.core:core-ktx:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d6805e45687c589a7b90c54bf4636a00/transformed/core-ktx-1.15.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-ktx:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d6805e45687c589a7b90c54bf4636a00/transformed/core-ktx-1.15.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:21:5-44
+MERGED from [androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:21:5-44
+MERGED from [androidx.room:room-ktx:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/040eb3d070757f4404110763f24bb527/transformed/room-ktx-2.7.0-alpha01/AndroidManifest.xml:20:5-44
+MERGED from [androidx.room:room-ktx:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/040eb3d070757f4404110763f24bb527/transformed/room-ktx-2.7.0-alpha01/AndroidManifest.xml:20:5-44
+MERGED from [androidx.datastore:datastore-core-android:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/61b55678271fa1698975f306f57b3e92/transformed/datastore-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.datastore:datastore-core-android:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/61b55678271fa1698975f306f57b3e92/transformed/datastore-core-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.datastore:datastore-android:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/229ec3e475aa93cd9495441326fe5892/transformed/datastore-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.datastore:datastore-android:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/229ec3e475aa93cd9495441326fe5892/transformed/datastore-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.datastore:datastore-preferences-android:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/223f8d43837e1977d44e45e9e71db352/transformed/datastore-preferences-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.datastore:datastore-preferences-android:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/223f8d43837e1977d44e45e9e71db352/transformed/datastore-preferences-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/34eb97f14bb5a61b35cc012f686ffd9c/transformed/runtime-saveable-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/34eb97f14bb5a61b35cc012f686ffd9c/transformed/runtime-saveable-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/99f48cde3d4f9554736a878980f85657/transformed/runtime-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/99f48cde3d4f9554736a878980f85657/transformed/runtime-release/AndroidManifest.xml:5:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/f62700e2c5fd927fc46dfad2a054e645/transformed/startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/f62700e2c5fd927fc46dfad2a054e645/transformed/startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.tracing:tracing:1.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/b6bb6709981b9ed2d6867e0e5471d6b4/transformed/tracing-1.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.tracing:tracing:1.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/b6bb6709981b9ed2d6867e0e5471d6b4/transformed/tracing-1.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.tracing:tracing-ktx:1.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/40c32501522cde77bb024635aca32c59/transformed/tracing-ktx-1.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.tracing:tracing-ktx:1.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/40c32501522cde77bb024635aca32c59/transformed/tracing-ktx-1.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/ad3ac349392172f934e34f3ccac886af/transformed/annotation-experimental-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/ad3ac349392172f934e34f3ccac886af/transformed/annotation-experimental-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.security:security-crypto:1.1.0-alpha06] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1c56f7475588fe25fca90506b466f699/transformed/security-crypto-1.1.0-alpha06/AndroidManifest.xml:20:5-44
+MERGED from [androidx.security:security-crypto:1.1.0-alpha06] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1c56f7475588fe25fca90506b466f699/transformed/security-crypto-1.1.0-alpha06/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/11d89493354b878ede5b99b1eb863e1e/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/11d89493354b878ede5b99b1eb863e1e/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/76077b52e3a116be2e6c347eeb2375cc/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/76077b52e3a116be2e6c347eeb2375cc/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1cec0a752e680f65cd316a03df4dc556/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/1cec0a752e680f65cd316a03df4dc556/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.exifinterface:exifinterface:1.3.2] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/20aa3d2a0311b01468816fe1f9a1ee22/transformed/exifinterface-1.3.2/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.3.2] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/20aa3d2a0311b01468816fe1f9a1ee22/transformed/exifinterface-1.3.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.android.datatransport:transport-api:2.2.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/0a38148da69b804772c212021c27de83/transformed/transport-api-2.2.1/AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.android.datatransport:transport-api:2.2.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/0a38148da69b804772c212021c27de83/transformed/transport-api-2.2.1/AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.firebase:firebase-components:16.1.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/6a7a309b2e0842aba383721d6d81c295/transformed/firebase-components-16.1.0/AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.firebase:firebase-components:16.1.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/6a7a309b2e0842aba383721d6d81c295/transformed/firebase-components-16.1.0/AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.firebase:firebase-encoders-json:17.1.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/886713a29551e56a5f3449d09baf7a0c/transformed/firebase-encoders-json-17.1.0/AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.firebase:firebase-encoders-json:17.1.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/886713a29551e56a5f3449d09baf7a0c/transformed/firebase-encoders-json-17.1.0/AndroidManifest.xml:19:5-21:41
+MERGED from [androidx.sqlite:sqlite-framework-android:2.5.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/2a0632653d6f89c51c9d63dbb9970d3e/transformed/sqlite-framework-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-framework-android:2.5.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/2a0632653d6f89c51c9d63dbb9970d3e/transformed/sqlite-framework-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-android:2.5.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/44974c9019ce7989a3f70abae3b9f6de/transformed/sqlite-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-android:2.5.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/44974c9019ce7989a3f70abae3b9f6de/transformed/sqlite-release/AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/16ee8910bcca73b5c26a724108c6f2ef/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/16ee8910bcca73b5c26a724108c6f2ef/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.odml:image:1.0.0-beta1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/444a90fffa5bb644ad7a4ec304aa33e3/transformed/image-1.0.0-beta1/AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.odml:image:1.0.0-beta1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/444a90fffa5bb644ad7a4ec304aa33e3/transformed/image-1.0.0-beta1/AndroidManifest.xml:5:5-44
+	android:targetSdkVersion
+		INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml
+service#androidx.camera.core.impl.MetadataHolderService
+ADDED from [androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:29:9-33:78
+MERGED from [androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:24:9-33:19
+MERGED from [androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:24:9-33:19
+	android:enabled
+		ADDED from [androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:31:13-36
+	android:exported
+		ADDED from [androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:32:13-37
+	tools:ignore
+		ADDED from [androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:33:13-75
+	android:name
+		ADDED from [androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:30:13-75
+meta-data#androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER
+ADDED from [androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:30:13-32:89
+	android:value
+		ADDED from [androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:32:17-86
+	android:name
+		ADDED from [androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:31:17-103
+uses-permission#android.permission.USE_FINGERPRINT
+ADDED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/64c182ee7a9001e567743f91c5b4a88c/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:25:5-74
+	android:name
+		ADDED from [androidx.biometric:biometric:1.2.0-alpha05] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/64c182ee7a9001e567743f91c5b4a88c/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:25:22-71
+service#com.google.mlkit.common.internal.MlKitComponentDiscoveryService
+ADDED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:9:9-15:19
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:9:9-15:19
+MERGED from [com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:9:9-15:19
+MERGED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:15:9-23:19
+MERGED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:15:9-23:19
+	android:exported
+		ADDED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:11:13-37
+	tools:targetApi
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:19:13-32
+	android:directBootAware
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:17:13-43
+	android:name
+		ADDED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:10:13-91
+meta-data#com.google.firebase.components:com.google.mlkit.vision.barcode.internal.BarcodeRegistrar
+ADDED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:12:13-14:85
+	android:value
+		ADDED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:14:17-82
+	android:name
+		ADDED from [com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:13:17-120
+meta-data#com.google.firebase.components:com.google.mlkit.vision.common.internal.VisionCommonRegistrar
+ADDED from [com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:12:13-14:85
+	android:value
+		ADDED from [com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:14:17-82
+	android:name
+		ADDED from [com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:13:17-124
+provider#com.google.mlkit.common.internal.MlKitInitProvider
+ADDED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:9:9-13:38
+	android:authorities
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:11:13-69
+	android:exported
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:12:13-37
+	android:initOrder
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:13:13-35
+	android:name
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:10:13-78
+meta-data#com.google.firebase.components:com.google.mlkit.common.internal.CommonComponentRegistrar
+ADDED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:20:13-22:85
+	android:value
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:22:17-82
+	android:name
+		ADDED from [com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:21:17-120
+activity#com.google.android.gms.common.api.GoogleApiActivity
+ADDED from [com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:9-173
+	android:exported
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:146-170
+	android:theme
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:86-145
+	android:name
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:19-85
+meta-data#com.google.android.gms.version
+ADDED from [com.google.android.gms:play-services-basement:18.4.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d9bfd9d785f6b418dbcb1a45286e1f71/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:9-122
+	android:value
+		ADDED from [com.google.android.gms:play-services-basement:18.4.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d9bfd9d785f6b418dbcb1a45286e1f71/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:66-119
+	android:name
+		ADDED from [com.google.android.gms:play-services-basement:18.4.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d9bfd9d785f6b418dbcb1a45286e1f71/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:20-65
+provider#androidx.startup.InitializationProvider
+ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/f62700e2c5fd927fc46dfad2a054e645/transformed/startup-runtime-1.1.1/AndroidManifest.xml:26:9-30:34
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/f62700e2c5fd927fc46dfad2a054e645/transformed/startup-runtime-1.1.1/AndroidManifest.xml:26:9-30:34
+	tools:node
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:28:13-31
+	android:authorities
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
+	android:exported
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
+meta-data#androidx.emoji2.text.EmojiCompatInitializer
+ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+meta-data#androidx.lifecycle.ProcessLifecycleInitializer
+ADDED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:30:17-78
+permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:23:9-81
+permission#com.meowcoin.wallet.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:23:9-81
+uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:26:22-94
+uses-permission#com.meowcoin.wallet.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:26:22-94
+service#androidx.room.MultiInstanceInvalidationService
+ADDED from [androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:24:9-28:63
+	android:exported
+		ADDED from [androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:27:13-37
+	tools:ignore
+		ADDED from [androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:28:13-60
+	android:directBootAware
+		ADDED from [androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:26:13-43
+	android:name
+		ADDED from [androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:25:13-74
+meta-data#androidx.profileinstaller.ProfileInstallerInitializer
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+receiver#androidx.profileinstaller.ProfileInstallReceiver
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+	android:enabled
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+	android:exported
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+	android:permission
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+	android:directBootAware
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+intent-filter#action:name:androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+action#androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+intent-filter#action:name:androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+action#androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+intent-filter#action:name:androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+action#androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+intent-filter#action:name:androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+action#androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+service#com.google.android.datatransport.runtime.backends.TransportBackendDiscovery
+ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:29:9-35:19
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:36:9-38:40
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:36:9-38:40
+	android:exported
+		ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:31:13-37
+	android:name
+		ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:30:13-103
+meta-data#backend:com.google.android.datatransport.cct.CctBackendFactory
+ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:32:13-34:39
+	android:value
+		ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:34:17-36
+	android:name
+		ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:33:17-94
+service#com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService
+ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:26:9-30:19
+	android:exported
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:28:13-37
+	android:permission
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:29:13-69
+	android:name
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:27:13-117
+receiver#com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver
+ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:32:9-34:40
+	android:exported
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:34:13-37
+	android:name
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:33:13-132

@@ -1,0 +1,311 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.meowcoin.wallet"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="35" />
+10
+11    <!-- Network access for Electrum light client -->
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:6:5-67
+12-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:6:22-64
+13    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+13-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:7:5-79
+13-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:7:22-76
+14
+15    <!-- Camera for QR code scanning (optional) -->
+16    <uses-permission android:name="android.permission.CAMERA" />
+16-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:10:5-65
+16-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:10:22-62
+17
+18    <uses-feature
+18-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:11:5-85
+19        android:name="android.hardware.camera"
+19-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:11:19-57
+20        android:required="false" />
+20-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:11:58-82
+21
+22    <!-- Biometric auth (optional) -->
+23    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+23-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:14:5-72
+23-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:14:22-69
+24    <!-- suppress DeprecatedClassUsageInspection -->
+25    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+25-->[androidx.biometric:biometric:1.2.0-alpha05] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/64c182ee7a9001e567743f91c5b4a88c/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:25:5-74
+25-->[androidx.biometric:biometric:1.2.0-alpha05] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/64c182ee7a9001e567743f91c5b4a88c/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:25:22-71
+26
+27    <permission
+27-->[androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:22:5-24:47
+28        android:name="com.meowcoin.wallet.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+28-->[androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:23:9-81
+29        android:protectionLevel="signature" />
+29-->[androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:24:9-44
+30
+31    <uses-permission android:name="com.meowcoin.wallet.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+31-->[androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:26:5-97
+31-->[androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:26:22-94
+32
+33    <application
+33-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:16:5-48:19
+34        android:name="com.meowcoin.wallet.MeowcoinApp"
+34-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:17:9-36
+35        android:allowBackup="false"
+35-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:18:9-36
+36        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+36-->[androidx.core:core:1.15.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/328f01540da399522aa683061a8fe80f/transformed/core-1.15.0/AndroidManifest.xml:28:18-86
+37        android:dataExtractionRules="@xml/data_extraction_rules"
+37-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:19:9-65
+38        android:debuggable="true"
+39        android:extractNativeLibs="false"
+40        android:fullBackupContent="false"
+40-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:20:9-42
+41        android:icon="@mipmap/ic_launcher"
+41-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:21:9-43
+42        android:label="@string/app_name"
+42-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:22:9-41
+43        android:networkSecurityConfig="@xml/network_security_config"
+43-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:26:9-69
+44        android:roundIcon="@mipmap/ic_launcher_round"
+44-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:23:9-54
+45        android:supportsRtl="true"
+45-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:24:9-35
+46        android:testOnly="true"
+47        android:theme="@style/Theme.MeowcoinWallet" >
+47-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:25:9-52
+48        <activity
+48-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:29:9-47:20
+49            android:name="com.meowcoin.wallet.MainActivity"
+49-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:30:13-41
+50            android:exported="true"
+50-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:31:13-36
+51            android:theme="@style/Theme.MeowcoinWallet"
+51-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:33:13-56
+52            android:windowSoftInputMode="adjustResize" >
+52-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:32:13-55
+53            <intent-filter>
+53-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:35:13-38:29
+54                <action android:name="android.intent.action.MAIN" />
+54-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:36:17-69
+54-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:36:25-66
+55
+56                <category android:name="android.intent.category.LAUNCHER" />
+56-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:37:17-77
+56-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:37:27-74
+57            </intent-filter>
+58
+59            <!-- Handle meowcoin: URI scheme for payment requests -->
+60            <intent-filter>
+60-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:41:13-46:29
+61                <action android:name="android.intent.action.VIEW" />
+61-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:42:17-69
+61-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:42:25-66
+62
+63                <category android:name="android.intent.category.DEFAULT" />
+63-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:43:17-76
+63-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:43:27-73
+64                <category android:name="android.intent.category.BROWSABLE" />
+64-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:44:17-78
+64-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:44:27-75
+65
+66                <data android:scheme="meowcoin" />
+66-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:45:17-51
+66-->/Users/weldenmiller/MeowcoinWallet/app/src/main/AndroidManifest.xml:45:23-48
+67            </intent-filter>
+68        </activity>
+69        <!--
+70        Service for holding metadata. Cannot be instantiated.
+71        Metadata will be merged from other manifests.
+72        -->
+73        <service
+73-->[androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:29:9-33:78
+74            android:name="androidx.camera.core.impl.MetadataHolderService"
+74-->[androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:30:13-75
+75            android:enabled="false"
+75-->[androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:31:13-36
+76            android:exported="false" >
+76-->[androidx.camera:camera-core:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3e2f5609727f0dfe242006d83209c6de/transformed/camera-core-1.4.1/AndroidManifest.xml:32:13-37
+77            <meta-data
+77-->[androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:30:13-32:89
+78                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+78-->[androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:31:17-103
+79                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+79-->[androidx.camera:camera-camera2:1.4.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/3d4d5252a84620775bf1f3263219d225/transformed/camera-camera2-1.4.1/AndroidManifest.xml:32:17-86
+80        </service>
+81        <service
+81-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:9:9-15:19
+82            android:name="com.google.mlkit.common.internal.MlKitComponentDiscoveryService"
+82-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:10:13-91
+83            android:directBootAware="true"
+83-->[com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:17:13-43
+84            android:exported="false" >
+84-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:11:13-37
+85            <meta-data
+85-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:12:13-14:85
+86                android:name="com.google.firebase.components:com.google.mlkit.vision.barcode.internal.BarcodeRegistrar"
+86-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:13:17-120
+87                android:value="com.google.firebase.components.ComponentRegistrar" />
+87-->[com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/494f6c7e00f4a58c36fd4f550ae5989c/transformed/play-services-mlkit-barcode-scanning-18.3.1/AndroidManifest.xml:14:17-82
+88            <meta-data
+88-->[com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:12:13-14:85
+89                android:name="com.google.firebase.components:com.google.mlkit.vision.common.internal.VisionCommonRegistrar"
+89-->[com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:13:17-124
+90                android:value="com.google.firebase.components.ComponentRegistrar" />
+90-->[com.google.mlkit:vision-common:17.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/725f6f20bfae8e874d94c9a0efad7bab/transformed/vision-common-17.3.0/AndroidManifest.xml:14:17-82
+91            <meta-data
+91-->[com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:20:13-22:85
+92                android:name="com.google.firebase.components:com.google.mlkit.common.internal.CommonComponentRegistrar"
+92-->[com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:21:17-120
+93                android:value="com.google.firebase.components.ComponentRegistrar" />
+93-->[com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:22:17-82
+94        </service>
+95
+96        <provider
+96-->[com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:9:9-13:38
+97            android:name="com.google.mlkit.common.internal.MlKitInitProvider"
+97-->[com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:10:13-78
+98            android:authorities="com.meowcoin.wallet.mlkitinitprovider"
+98-->[com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:11:13-69
+99            android:exported="false"
+99-->[com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:12:13-37
+100            android:initOrder="99" />
+100-->[com.google.mlkit:common:18.11.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/398c580055a942666d52761eedbeeb87/transformed/common-18.11.0/AndroidManifest.xml:13:13-35
+101
+102        <activity
+102-->[com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:9-173
+103            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+103-->[com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:19-85
+104            android:exported="false"
+104-->[com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:146-170
+105            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+105-->[com.google.android.gms:play-services-base:18.5.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a0676ddfab02fb188d6bb4e42b3c373d/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:86-145
+106
+107        <meta-data
+107-->[com.google.android.gms:play-services-basement:18.4.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d9bfd9d785f6b418dbcb1a45286e1f71/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:9-122
+108            android:name="com.google.android.gms.version"
+108-->[com.google.android.gms:play-services-basement:18.4.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d9bfd9d785f6b418dbcb1a45286e1f71/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:20-65
+109            android:value="@integer/google_play_services_version" />
+109-->[com.google.android.gms:play-services-basement:18.4.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d9bfd9d785f6b418dbcb1a45286e1f71/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:66-119
+110
+111        <provider
+111-->[androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+112            android:name="androidx.startup.InitializationProvider"
+112-->[androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
+113            android:authorities="com.meowcoin.wallet.androidx-startup"
+113-->[androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
+114            android:exported="false" >
+114-->[androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
+115            <meta-data
+115-->[androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+116                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+116-->[androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+117                android:value="androidx.startup" />
+117-->[androidx.emoji2:emoji2:1.3.0] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/8351bbe876f5f3c9b86cf16a8b30d2ea/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+118            <meta-data
+118-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:29:13-31:52
+119                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+119-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:30:17-78
+120                android:value="androidx.startup" />
+120-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/164f97eab53478e2771bbc3a1b738508/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:31:17-49
+121            <meta-data
+121-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+122                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+122-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+123                android:value="androidx.startup" />
+123-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+124        </provider>
+125
+126        <activity
+126-->[androidx.compose.ui:ui-tooling-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/f9de858a88c094325f77490258e1a2e7/transformed/ui-tooling-release/AndroidManifest.xml:23:9-25:39
+127            android:name="androidx.compose.ui.tooling.PreviewActivity"
+127-->[androidx.compose.ui:ui-tooling-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/f9de858a88c094325f77490258e1a2e7/transformed/ui-tooling-release/AndroidManifest.xml:24:13-71
+128            android:exported="true" />
+128-->[androidx.compose.ui:ui-tooling-android:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/f9de858a88c094325f77490258e1a2e7/transformed/ui-tooling-release/AndroidManifest.xml:25:13-36
+129        <activity
+129-->[androidx.compose.ui:ui-test-manifest:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/7ac815424ef203aab922719bbb8dbe3e/transformed/ui-test-manifest-1.7.6/AndroidManifest.xml:23:9-25:39
+130            android:name="androidx.activity.ComponentActivity"
+130-->[androidx.compose.ui:ui-test-manifest:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/7ac815424ef203aab922719bbb8dbe3e/transformed/ui-test-manifest-1.7.6/AndroidManifest.xml:24:13-63
+131            android:exported="true" />
+131-->[androidx.compose.ui:ui-test-manifest:1.7.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/7ac815424ef203aab922719bbb8dbe3e/transformed/ui-test-manifest-1.7.6/AndroidManifest.xml:25:13-36
+132
+133        <service
+133-->[androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:24:9-28:63
+134            android:name="androidx.room.MultiInstanceInvalidationService"
+134-->[androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:25:13-74
+135            android:directBootAware="true"
+135-->[androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:26:13-43
+136            android:exported="false" />
+136-->[androidx.room:room-runtime-android:2.7.0-alpha01] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/df09e8f3ae560bef31a38b2cc7aa567a/transformed/room-runtime-release/AndroidManifest.xml:27:13-37
+137
+138        <receiver
+138-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+139            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+139-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+140            android:directBootAware="false"
+140-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+141            android:enabled="true"
+141-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+142            android:exported="true"
+142-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+143            android:permission="android.permission.DUMP" >
+143-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+144            <intent-filter>
+144-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+145                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+145-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+145-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+146            </intent-filter>
+147            <intent-filter>
+147-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+148                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+148-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+148-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+149            </intent-filter>
+150            <intent-filter>
+150-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+151                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+151-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+151-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+152            </intent-filter>
+153            <intent-filter>
+153-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+154                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+154-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+154-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/689ca5fd5b14565e66179f387b1d5f6d/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+155            </intent-filter>
+156        </receiver>
+157
+158        <service
+158-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:29:9-35:19
+159            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+159-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:30:13-103
+160            android:exported="false" >
+160-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:31:13-37
+161            <meta-data
+161-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:32:13-34:39
+162                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+162-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:33:17-94
+163                android:value="cct" />
+163-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/d37879aca2c20bc52d372ffc69d2889f/transformed/transport-backend-cct-2.3.3/AndroidManifest.xml:34:17-36
+164        </service>
+165        <service
+165-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:26:9-30:19
+166            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+166-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:27:13-117
+167            android:exported="false"
+167-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:28:13-37
+168            android:permission="android.permission.BIND_JOB_SERVICE" >
+168-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:29:13-69
+169        </service>
+170
+171        <receiver
+171-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:32:9-34:40
+172            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+172-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:33:13-132
+173            android:exported="false" />
+173-->[com.google.android.datatransport:transport-runtime:2.2.6] /Users/weldenmiller/.gradle/caches/9.2.1/transforms/a50f8ac4562168236b60e3ff004ea36d/transformed/transport-runtime-2.2.6/AndroidManifest.xml:34:13-37
+174    </application>
+175
+176</manifest>

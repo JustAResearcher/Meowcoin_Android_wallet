@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.meowcoin.wallet.app-debug-77:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.meowcoin.wallet.app-main-79:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.meowcoin.wallet.app-debug-77:/xml_network_security_config.xml.flat",
+        "source": "com.meowcoin.wallet.app-main-79:/xml/network_security_config.xml"
+    },
+    {
+        "merged": "com.meowcoin.wallet.app-debug-77:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.meowcoin.wallet.app-main-79:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.meowcoin.wallet.app-debug-77:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.meowcoin.wallet.app-main-79:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.meowcoin.wallet.app-debug-77:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.meowcoin.wallet.app-main-79:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.meowcoin.wallet.app-debug-77:/xml_data_extraction_rules.xml.flat",
+        "source": "com.meowcoin.wallet.app-main-79:/xml/data_extraction_rules.xml"
+    }
+]
