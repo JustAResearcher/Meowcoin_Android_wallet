@@ -145,7 +145,7 @@ fun WelcomeScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "🐾 Your keys, your coins 🐾",
+            text = "Your keys, your coins",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

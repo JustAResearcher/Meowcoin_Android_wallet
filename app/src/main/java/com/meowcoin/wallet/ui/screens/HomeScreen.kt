@@ -128,7 +128,7 @@ fun HomeScreen(
                         EmptyState(
                             icon = Icons.Default.Receipt,
                             title = "No transactions yet",
-                            subtitle = "Your Meowcoin transactions will appear here 🐾"
+                            subtitle = "Your Meowcoin transactions will appear here"
                         )
                     }
                 } else {

@@ -78,11 +78,7 @@ fun BalanceCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Cat paw decoration 🐾
-            Text(
-                text = "🐾",
-                fontSize = 24.sp
-            )
+
         }
     }
 }
@@ -417,7 +413,7 @@ fun MeowLoading(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "🐱 $message",
+            text = message,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
