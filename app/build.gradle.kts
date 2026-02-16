@@ -86,12 +86,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
 
-    // Retrofit for API calls
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-
-    // Gson
+    // Gson (used by Electrum JSON-RPC)
     implementation("com.google.code.gson:gson:2.11.0")
 
     // Coroutines
