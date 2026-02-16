@@ -209,7 +209,7 @@ fun SendScreen(
                     Icon(Icons.Default.Send, "Send", modifier = Modifier.size(20.dp))
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        "Send MEWC 🐾",
+                        "Send MEWC",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )

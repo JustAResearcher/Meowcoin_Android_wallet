@@ -1,5 +1,6 @@
 package com.meowcoin.wallet.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,8 +10,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.meowcoin.wallet.R
 import com.meowcoin.wallet.data.local.TransactionEntity
 import com.meowcoin.wallet.ui.components.*
 import java.text.SimpleDateFormat
@@ -34,7 +37,12 @@ fun HomeScreen(
             TopAppBar(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("🐱 ", style = MaterialTheme.typography.headlineMedium)
+                        Image(
+                            painter = painterResource(id = R.drawable.meowcoin_logo),
+                            contentDescription = "Meowcoin",
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             "Meowcoin",
                             style = MaterialTheme.typography.headlineMedium,
@@ -120,7 +128,7 @@ fun HomeScreen(
                         EmptyState(
                             icon = Icons.Default.Receipt,
                             title = "No transactions yet",
-                            subtitle = "Your Meowcoin transactions will appear here 🐾"
+                            subtitle = "Your Meowcoin transactions will appear here"
                         )
                     }
                 } else {

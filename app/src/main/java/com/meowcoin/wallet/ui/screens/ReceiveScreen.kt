@@ -1,5 +1,6 @@
 package com.meowcoin.wallet.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -9,10 +10,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.meowcoin.wallet.R
 import com.meowcoin.wallet.ui.components.AddressDisplay
 import com.meowcoin.wallet.ui.theme.MeowOrange
 
@@ -53,9 +56,10 @@ fun ReceiveScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = "🐱",
-                style = MaterialTheme.typography.displayLarge
+            Image(
+                painter = painterResource(id = R.drawable.meowcoin_logo),
+                contentDescription = "Meowcoin",
+                modifier = Modifier.size(80.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -98,7 +102,7 @@ fun ReceiveScreen(
                 shape = MaterialTheme.shapes.medium
             ) {
                 Text(
-                    "Copy Address 🐾",
+                    "Copy Address",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
