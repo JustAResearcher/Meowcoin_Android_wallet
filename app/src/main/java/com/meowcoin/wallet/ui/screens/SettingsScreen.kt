@@ -232,7 +232,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                "Meowcoin Wallet v1.0.0 🐾",
+                "Meowcoin Wallet v1.0.1 🐾",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
