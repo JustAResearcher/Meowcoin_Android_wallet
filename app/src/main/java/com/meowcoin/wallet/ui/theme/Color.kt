@@ -2,11 +2,11 @@ package com.meowcoin.wallet.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Meowcoin brand colors — warm cat-themed palette
-val MeowOrange = Color(0xFFFF8C00)          // Primary brand orange
-val MeowOrangeLight = Color(0xFFFFAD33)     // Lighter variant
-val MeowOrangeDark = Color(0xFFCC7000)      // Darker variant
-val MeowAmber = Color(0xFFFFB347)           // Accent warm amber
+// Meowcoin brand colors — official 2025 palette
+val MeowOrange = Color(0xFFBE840A)          // Primary brand color (official)
+val MeowOrangeLight = Color(0xFFD4A032)     // Lighter variant
+val MeowOrangeDark = Color(0xFF8A6108)      // Darker variant
+val MeowAmber = Color(0xFFBC8500)           // Accent (from MEWC logo)
 
 val MeowDarkBg = Color(0xFF121212)          // Dark background
 val MeowDarkSurface = Color(0xFF1E1E2E)     // Dark surface / card
