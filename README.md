@@ -226,7 +226,7 @@ Contributions are welcome! Here's how to help:
 
 ## Meowcoin Resources
 
-- **Website:** [meowcoin.cc](https://meowcoin.cc)
+- **Website:** [meowcoin.cc](https://mewccrypto.com)
 - **GitHub:** [Meowcoin-Foundation](https://github.com/Meowcoin-Foundation)
 - **Explorer:** [explorer.mewccrypto.com](https://explorer.mewccrypto.com)
 - **Discord:** [Meowcoin Community](https://discord.gg/meowcoin)
