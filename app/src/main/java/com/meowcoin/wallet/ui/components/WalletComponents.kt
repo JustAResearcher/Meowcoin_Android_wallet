@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
+import com.meowcoin.wallet.data.local.AssetEntity
 import com.meowcoin.wallet.ui.theme.MeowGreen
 import com.meowcoin.wallet.ui.theme.MeowOrange
 import com.meowcoin.wallet.ui.theme.MeowRed
@@ -417,5 +418,88 @@ fun MeowLoading(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+    }
+}
+
+/**
+ * Asset list item showing token name and balance.
+ */
+@Composable
+fun AssetItem(
+    asset: AssetEntity,
+    modifier: Modifier = Modifier
+) {
+    val displayAmount = if (asset.units > 0) {
+        val divisor = Math.pow(10.0, asset.units.toDouble())
+        "%.${asset.units}f".format(asset.amount / divisor)
+    } else {
+        asset.amount.toString()
+    }
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Token icon
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MeowOrange.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Token,
+                    contentDescription = "Asset",
+                    tint = MeowOrange,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = asset.assetName,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                if (asset.hasIpfs && asset.ipfsHash.isNotEmpty()) {
+                    Text(
+                        text = "IPFS: ${asset.ipfsHash.take(12)}...",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1
+                    )
+                }
+            }
+
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = displayAmount,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MeowOrange
+                )
+                if (asset.reissuable) {
+                    Text(
+                        text = "Reissuable",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MeowGreen
+                    )
+                }
+            }
+        }
     }
 }

@@ -9,7 +9,10 @@ data class WalletEntity(
     val address: String,
     val label: String = "Main Wallet",
     val createdAt: Long = System.currentTimeMillis(),
-    val isActive: Boolean = true
+    val isActive: Boolean = true,
+    val derivationPath: String = "",   // e.g. "m/44'/1669'/0'/0/0"
+    val derivationIndex: Int = 0,      // BIP44 address_index
+    val isChange: Boolean = false      // true = change chain (m/.../1/x)
 )
 
 @Entity(tableName = "transactions")
@@ -38,4 +41,22 @@ data class UtxoEntity(
     val scriptPubKey: String,
     val confirmations: Int = 0,
     val isSpent: Boolean = false
+)
+
+/**
+ * Meowcoin asset (MEWC uses RVN-style asset layer).
+ * Assets are tokens created on the Meowcoin blockchain.
+ */
+@Entity(tableName = "assets")
+data class AssetEntity(
+    @PrimaryKey
+    val id: String,                     // assetName:walletAddress
+    val assetName: String,              // e.g. "MY_TOKEN"
+    val walletAddress: String,
+    val amount: Long = 0,               // Quantity in smallest unit
+    val units: Int = 0,                 // Decimal places (0-8)
+    val reissuable: Boolean = false,
+    val hasIpfs: Boolean = false,
+    val ipfsHash: String = "",
+    val lastUpdated: Long = System.currentTimeMillis()
 )

@@ -4,9 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.meowcoin.wallet.crypto.SecureKeyStore
+import com.meowcoin.wallet.data.local.AssetEntity
 import com.meowcoin.wallet.data.local.TransactionEntity
 import com.meowcoin.wallet.data.local.WalletDatabase
+import com.meowcoin.wallet.data.local.WalletEntity
 import com.meowcoin.wallet.data.remote.ElectrumClient
+import com.meowcoin.wallet.data.remote.PriceService
 import com.meowcoin.wallet.data.repository.WalletRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -24,16 +27,25 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     private val _sendState = MutableStateFlow(SendUiState())
     val sendState: StateFlow<SendUiState> = _sendState.asStateFlow()
 
+    private val _mnemonicState = MutableStateFlow(MnemonicUiState())
+    val mnemonicState: StateFlow<MnemonicUiState> = _mnemonicState.asStateFlow()
+
     // ── Connection state from Electrum ──
     val connectionState: StateFlow<ElectrumClient.ConnectionState> = repository.connectionState
     val serverInfo = repository.serverInfo
 
     init {
-        // Check if wallet exists
         if (secureKeyStore.hasWallet()) {
             val address = secureKeyStore.getPrimaryAddress()
             if (address != null) {
-                _uiState.update { it.copy(address = address, hasWallet = true) }
+                _uiState.update {
+                    it.copy(
+                        address = address,
+                        hasWallet = true,
+                        isHdWallet = secureKeyStore.isHdWallet(),
+                        biometricEnabled = secureKeyStore.isBiometricEnabled()
+                    )
+                }
                 observeWalletData(address)
                 connectAndSync(address)
             }
@@ -41,7 +53,99 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     // ═══════════════════════════════════════════
-    //  Wallet Creation / Import
+    //  HD Wallet Creation / Import
+    // ═══════════════════════════════════════════
+
+    /**
+     * Create a new HD wallet. Generates mnemonic and stores in mnemonicState
+     * for the user to back up before finalizing.
+     */
+    fun createHdWallet(wordCount: Int = 12) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val mnemonic = repository.createHdWallet(wordCount)
+                val address = secureKeyStore.getPrimaryAddress() ?: ""
+                _mnemonicState.update {
+                    it.copy(
+                        mnemonic = mnemonic,
+                        words = mnemonic.split(" "),
+                        isBackedUp = false
+                    )
+                }
+                _uiState.update {
+                    it.copy(
+                        address = address,
+                        hasWallet = true,
+                        isHdWallet = true,
+                        isLoading = false
+                    )
+                }
+                observeWalletData(address)
+                connectAndSync(address)
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, error = "Failed to create wallet: ${e.message}")
+                }
+            }
+        }
+    }
+
+    /**
+     * Import / restore an HD wallet from a mnemonic seed phrase.
+     */
+    fun importHdWallet(mnemonic: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val address = repository.importHdWallet(mnemonic.trim().lowercase())
+                _uiState.update {
+                    it.copy(
+                        address = address,
+                        hasWallet = true,
+                        isHdWallet = true,
+                        isLoading = false
+                    )
+                }
+                observeWalletData(address)
+                connectAndSync(address)
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, error = "Import failed: ${e.message}")
+                }
+            }
+        }
+    }
+
+    fun confirmMnemonicBackup() {
+        _mnemonicState.update { it.copy(isBackedUp = true) }
+    }
+
+    /**
+     * Derive the next HD address.
+     */
+    fun deriveNextAddress(label: String = "") {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val newAddress = repository.deriveNextAddress(label)
+                // Refresh to pick up the new address
+                repository.refreshWalletData(newAddress)
+                repository.subscribeToAddress(newAddress)
+                // Update wallet list
+                loadAllAddresses()
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, error = "Failed to derive address: ${e.message}")
+                }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    //  Legacy Wallet Creation / Import
     // ═══════════════════════════════════════════
 
     fun createWallet() {
@@ -50,7 +154,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val address = repository.createWallet()
                 _uiState.update {
-                    it.copy(address = address, hasWallet = true, isLoading = false)
+                    it.copy(address = address, hasWallet = true, isHdWallet = false, isLoading = false)
                 }
                 observeWalletData(address)
                 connectAndSync(address)
@@ -68,7 +172,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val address = repository.importWalletFromWIF(wif)
                 _uiState.update {
-                    it.copy(address = address, hasWallet = true, isLoading = false)
+                    it.copy(address = address, hasWallet = true, isHdWallet = false, isLoading = false)
                 }
                 observeWalletData(address)
                 connectAndSync(address)
@@ -90,14 +194,24 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val connected = repository.connectToNetwork()
                 if (connected) {
-                    // Subscribe to real-time address updates
-                    repository.subscribeToAddress(address)
-                    // Subscribe to new blocks
+                    // Subscribe to all addresses for HD wallets
+                    if (secureKeyStore.isHdWallet()) {
+                        repository.subscribeToAllAddresses()
+                    } else {
+                        repository.subscribeToAddress(address)
+                    }
                     repository.subscribeToBlocks { _ ->
                         viewModelScope.launch { refreshData() }
                     }
                     // Initial sync
-                    repository.refreshWalletData(address)
+                    if (secureKeyStore.isHdWallet()) {
+                        repository.refreshAllAddresses()
+                    } else {
+                        repository.refreshWalletData(address)
+                    }
+                    // Fetch fiat price
+                    try { repository.fetchFiatPrice() } catch (_: Exception) {}
+                    updateFiatBalance()
                 }
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = "Connection failed: ${e.message}") }
@@ -116,8 +230,13 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 if (connected) {
                     val address = _uiState.value.address
                     if (address.isNotEmpty()) {
-                        repository.subscribeToAddress(address)
-                        repository.refreshWalletData(address)
+                        if (secureKeyStore.isHdWallet()) {
+                            repository.subscribeToAllAddresses()
+                            repository.refreshAllAddresses()
+                        } else {
+                            repository.subscribeToAddress(address)
+                            repository.refreshWalletData(address)
+                        }
                     }
                 } else {
                     _uiState.update { it.copy(error = "Failed to connect to $host:$port") }
@@ -142,19 +261,60 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     // ═══════════════════════════════════════════
 
     private fun observeWalletData(address: String) {
-        // Observe balance
+        // Observe total balance (all addresses for HD, single for legacy)
         viewModelScope.launch {
-            repository.getBalanceMEWC(address).collect { balance ->
-                _uiState.update { it.copy(balance = balance) }
+            if (secureKeyStore.isHdWallet()) {
+                repository.getTotalBalanceMEWC().collect { balance ->
+                    _uiState.update { it.copy(balance = balance) }
+                    updateFiatBalance()
+                }
+            } else {
+                repository.getBalanceMEWC(address).collect { balance ->
+                    _uiState.update { it.copy(balance = balance) }
+                    updateFiatBalance()
+                }
             }
         }
 
-        // Observe transactions
+        // Observe transactions (all addresses for HD)
         viewModelScope.launch {
-            repository.getRecentTransactions(address).collect { txs ->
-                _uiState.update { it.copy(transactions = txs) }
+            if (secureKeyStore.isHdWallet()) {
+                repository.getAllTransactions().collect { txs ->
+                    _uiState.update { it.copy(transactions = txs) }
+                }
+            } else {
+                repository.getRecentTransactions(address).collect { txs ->
+                    _uiState.update { it.copy(transactions = txs) }
+                }
             }
         }
+
+        // Observe assets
+        viewModelScope.launch {
+            repository.getAssets().collect { assets ->
+                _uiState.update { it.copy(assets = assets) }
+            }
+        }
+
+        // Load all addresses for the address list
+        loadAllAddresses()
+    }
+
+    private fun loadAllAddresses() {
+        viewModelScope.launch {
+            repository.getAllWallets().collect { wallets ->
+                _uiState.update { it.copy(allAddresses = wallets) }
+            }
+        }
+    }
+
+    private fun updateFiatBalance() {
+        val balanceStr = _uiState.value.balance
+        val balanceDouble = balanceStr.toDoubleOrNull() ?: 0.0
+        val satoshis = (balanceDouble * 100_000_000).toLong()
+        val currency = secureKeyStore.getFiatCurrency()
+        val fiat = PriceService.formatFiat(satoshis, currency)
+        _uiState.update { it.copy(fiatBalance = fiat) }
     }
 
     // ═══════════════════════════════════════════
@@ -168,7 +328,13 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                repository.refreshWalletData(address)
+                if (secureKeyStore.isHdWallet()) {
+                    repository.refreshAllAddresses()
+                } else {
+                    repository.refreshWalletData(address)
+                }
+                try { repository.fetchFiatPrice() } catch (_: Exception) {}
+                updateFiatBalance()
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = "Refresh failed: ${e.message}") }
             } finally {
@@ -190,9 +356,8 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 result.fold(
                     onSuccess = { txId ->
                         _sendState.update {
-                            it.copy(isSending = false, successTxId = txId) 
+                            it.copy(isSending = false, successTxId = txId)
                         }
-                        // Refresh data after sending
                         refreshData()
                     },
                     onFailure = { error ->
@@ -209,18 +374,40 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    // ═══════════════════════════════════════════
+    //  Biometric
+    // ═══════════════════════════════════════════
+
+    fun setBiometricEnabled(enabled: Boolean) {
+        repository.setBiometricEnabled(enabled)
+        _uiState.update { it.copy(biometricEnabled = enabled) }
+    }
+
+    fun isBiometricEnabled(): Boolean = repository.isBiometricEnabled()
+
+    // ═══════════════════════════════════════════
+    //  Key Export / Seed Phrase
+    // ═══════════════════════════════════════════
+
     fun getWIF(): String? {
         return repository.getWIF(_uiState.value.address)
     }
 
+    fun getSeedPhrase(): String? {
+        return repository.getSeedPhrase()
+    }
+
+    // ═══════════════════════════════════════════
+    //  Wallet Deletion
+    // ═══════════════════════════════════════════
+
     fun deleteWallet() {
-        val address = _uiState.value.address
         viewModelScope.launch {
             repository.disconnect()
-            repository.deleteWallet(address)
-            secureKeyStore.clearAll()
+            repository.deleteAllWalletData()
             _uiState.value = WalletUiState()
             _sendState.value = SendUiState()
+            _mnemonicState.value = MnemonicUiState()
         }
     }
 
@@ -242,7 +429,12 @@ data class WalletUiState(
     val hasWallet: Boolean = false,
     val address: String = "",
     val balance: String = "0.00000000",
+    val fiatBalance: String = "",
     val transactions: List<TransactionEntity> = emptyList(),
+    val assets: List<AssetEntity> = emptyList(),
+    val allAddresses: List<WalletEntity> = emptyList(),
+    val isHdWallet: Boolean = false,
+    val biometricEnabled: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null
 )
@@ -251,4 +443,10 @@ data class SendUiState(
     val isSending: Boolean = false,
     val error: String? = null,
     val successTxId: String? = null
+)
+
+data class MnemonicUiState(
+    val mnemonic: String = "",
+    val words: List<String> = emptyList(),
+    val isBackedUp: Boolean = false
 )

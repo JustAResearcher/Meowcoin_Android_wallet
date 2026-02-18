@@ -10,9 +10,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.meowcoin.wallet.data.local.WalletEntity
 import com.meowcoin.wallet.data.remote.ElectrumClient
 import com.meowcoin.wallet.ui.theme.MeowGreen
 import com.meowcoin.wallet.ui.theme.MeowOrange
@@ -23,11 +23,19 @@ import com.meowcoin.wallet.ui.theme.MeowRed
 fun SettingsScreen(
     address: String,
     wif: String?,
+    seedPhrase: String?,
+    isHdWallet: Boolean,
+    biometricEnabled: Boolean,
+    biometricAvailable: Boolean,
+    allAddresses: List<WalletEntity>,
     connectionState: ElectrumClient.ConnectionState,
     serverHost: String,
     serverVersion: String,
     blockHeight: Int,
     onExportPrivateKey: () -> Unit,
+    onShowSeedPhrase: () -> Unit,
+    onToggleBiometric: (Boolean) -> Unit,
+    onDeriveNewAddress: () -> Unit,
     onConnectCustomServer: (host: String, port: Int, useSSL: Boolean) -> Unit,
     onReconnect: () -> Unit,
     onDeleteWallet: () -> Unit,
@@ -35,7 +43,9 @@ fun SettingsScreen(
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showPrivateKey by remember { mutableStateOf(false) }
+    var showSeedPhrase by remember { mutableStateOf(false) }
     var showCustomServer by remember { mutableStateOf(false) }
+    var showAddresses by remember { mutableStateOf(false) }
     var customHost by remember { mutableStateOf("") }
     var customPort by remember { mutableStateOf("50002") }
     var customSSL by remember { mutableStateOf(true) }
@@ -76,7 +86,6 @@ fun SettingsScreen(
                 )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // Connection status
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         val statusColor = when (connectionState) {
                             ElectrumClient.ConnectionState.CONNECTED -> MeowGreen
@@ -139,6 +148,48 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // ── Security ──
+            Text(
+                "Security",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+
+            // Biometric toggle
+            if (biometricAvailable) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                "Biometric Authentication",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                "Require fingerprint/face to open wallet",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = biometricEnabled,
+                            onCheckedChange = onToggleBiometric,
+                            colors = SwitchDefaults.colors(checkedThumbColor = MeowOrange)
+                        )
+                    }
+                }
+            }
+
             // ── Wallet Info ──
             Text(
                 "Wallet",
@@ -155,56 +206,176 @@ fun SettingsScreen(
                     SettingRow("Address", "${address.take(12)}...${address.takeLast(8)}")
                     SettingRow("Network", "Meowcoin Mainnet")
                     SettingRow("Address Type", "P2PKH (Legacy)")
+                    SettingRow("Wallet Type", if (isHdWallet) "HD (BIP44)" else "Single Key")
+                    if (isHdWallet) {
+                        SettingRow("Addresses", "${allAddresses.size}")
+                    }
                 }
             }
 
-            // Export private key
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        "Private Key (WIF)",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
+            // Address management (HD wallets)
+            if (isHdWallet) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                     )
-                    Spacer(Modifier.height(8.dp))
-
-                    if (showPrivateKey && wif != null) {
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = wif,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MeowRed
+                            "Address Management",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
                         )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            "⚠️ Never share this with anyone!",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MeowRed
-                        )
-                    }
+                        Spacer(Modifier.height(8.dp))
 
-                    Spacer(Modifier.height(8.dp))
-                    OutlinedButton(
-                        onClick = {
-                            if (showPrivateKey) {
-                                showPrivateKey = false
-                            } else {
-                                onExportPrivateKey()
-                                showPrivateKey = true
+                        if (showAddresses) {
+                            allAddresses.filter { !it.isChange }.forEach { wallet ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        "${wallet.label}: ${wallet.address.take(10)}...${wallet.address.takeLast(6)}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.height(8.dp))
+                        }
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(
+                                onClick = { showAddresses = !showAddresses },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(
+                                    if (showAddresses) Icons.Default.VisibilityOff else Icons.Default.List,
+                                    null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(Modifier.width(4.dp))
+                                Text(if (showAddresses) "Hide" else "Show Addresses")
+                            }
+                            OutlinedButton(
+                                onClick = onDeriveNewAddress,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(Icons.Default.Add, null, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.width(4.dp))
+                                Text("New Address")
                             }
                         }
-                    ) {
-                        Icon(
-                            if (showPrivateKey) Icons.Default.VisibilityOff
-                            else Icons.Default.Visibility,
-                            null,
-                            modifier = Modifier.size(16.dp)
+                    }
+                }
+            }
+
+            // Seed phrase backup (HD wallets)
+            if (isHdWallet) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            "Seed Phrase",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
                         )
-                        Spacer(Modifier.width(4.dp))
-                        Text(if (showPrivateKey) "Hide Key" else "Show Private Key")
+                        Spacer(Modifier.height(8.dp))
+
+                        if (showSeedPhrase && seedPhrase != null) {
+                            Text(
+                                text = seedPhrase,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MeowRed
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                "Never share this with anyone! Write it down and store safely.",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MeowRed
+                            )
+                        }
+
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedButton(
+                            onClick = {
+                                if (showSeedPhrase) {
+                                    showSeedPhrase = false
+                                } else {
+                                    onShowSeedPhrase()
+                                    showSeedPhrase = true
+                                }
+                            }
+                        ) {
+                            Icon(
+                                if (showSeedPhrase) Icons.Default.VisibilityOff
+                                else Icons.Default.Visibility,
+                                null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(if (showSeedPhrase) "Hide Phrase" else "Show Seed Phrase")
+                        }
+                    }
+                }
+            }
+
+            // Export private key (legacy or per-address)
+            if (!isHdWallet) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            "Private Key (WIF)",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(Modifier.height(8.dp))
+
+                        if (showPrivateKey && wif != null) {
+                            Text(
+                                text = wif,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MeowRed
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                "Never share this with anyone!",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MeowRed
+                            )
+                        }
+
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedButton(
+                            onClick = {
+                                if (showPrivateKey) {
+                                    showPrivateKey = false
+                                } else {
+                                    onExportPrivateKey()
+                                    showPrivateKey = true
+                                }
+                            }
+                        ) {
+                            Icon(
+                                if (showPrivateKey) Icons.Default.VisibilityOff
+                                else Icons.Default.Visibility,
+                                null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(if (showPrivateKey) "Hide Key" else "Show Private Key")
+                        }
                     }
                 }
             }
@@ -247,9 +418,14 @@ fun SettingsScreen(
             title = { Text("Delete Wallet?", color = MeowRed) },
             text = {
                 Text(
-                    "This will permanently remove your wallet from this device. " +
-                    "Make sure you have backed up your private key!\n\n" +
-                    "This action cannot be undone."
+                    if (isHdWallet)
+                        "This will permanently remove your wallet from this device. " +
+                        "Make sure you have backed up your seed phrase!\n\n" +
+                        "This action cannot be undone."
+                    else
+                        "This will permanently remove your wallet from this device. " +
+                        "Make sure you have backed up your private key!\n\n" +
+                        "This action cannot be undone."
                 )
             },
             confirmButton = {

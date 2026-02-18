@@ -3,3 +3,4 @@
 -dontwarn org.bouncycastle.**
 -keep class com.meowcoin.wallet.crypto.** { *; }
 -keep class com.meowcoin.wallet.data.local.** { *; }
+-keep class com.meowcoin.wallet.data.remote.PriceService** { *; }

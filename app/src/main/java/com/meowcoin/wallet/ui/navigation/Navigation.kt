@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.meowcoin.wallet.crypto.BiometricHelper
 import com.meowcoin.wallet.data.remote.ElectrumClient
 import com.meowcoin.wallet.ui.screens.*
 import com.meowcoin.wallet.viewmodel.WalletViewModel
@@ -31,10 +32,12 @@ fun MeowcoinNavHost(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val sendState by viewModel.sendState.collectAsStateWithLifecycle()
+    val mnemonicState by viewModel.mnemonicState.collectAsStateWithLifecycle()
     val connectionState by viewModel.connectionState.collectAsStateWithLifecycle()
     val serverInfo by viewModel.serverInfo.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    val biometricAvailable = remember { BiometricHelper.isBiometricAvailable(context) }
     val startDestination = if (uiState.hasWallet) Routes.HOME else Routes.WELCOME
 
     NavHost(
@@ -44,19 +47,26 @@ fun MeowcoinNavHost(
         // ── Welcome / Setup ──
         composable(Routes.WELCOME) {
             WelcomeScreen(
-                onCreateWallet = {
-                    viewModel.createWallet()
+                onCreateHdWallet = {
+                    viewModel.createHdWallet()
+                },
+                onImportMnemonic = { mnemonic ->
+                    viewModel.importHdWallet(mnemonic)
                 },
                 onImportWIF = { wif ->
                     viewModel.importWalletFromWIF(wif)
+                },
+                mnemonicWords = mnemonicState.words,
+                onMnemonicBackedUp = {
+                    viewModel.confirmMnemonicBackup()
                 },
                 isLoading = uiState.isLoading,
                 errorMessage = uiState.error
             )
 
-            // Navigate to Home when wallet is created
-            LaunchedEffect(uiState.hasWallet) {
-                if (uiState.hasWallet) {
+            // Navigate to Home when wallet is created and mnemonic backed up (or non-HD)
+            LaunchedEffect(uiState.hasWallet, mnemonicState.isBackedUp, uiState.isHdWallet) {
+                if (uiState.hasWallet && (!uiState.isHdWallet || mnemonicState.isBackedUp)) {
                     navController.navigate(Routes.HOME) {
                         popUpTo(Routes.WELCOME) { inclusive = true }
                     }
@@ -68,8 +78,10 @@ fun MeowcoinNavHost(
         composable(Routes.HOME) {
             HomeScreen(
                 balance = uiState.balance,
+                fiatBalance = uiState.fiatBalance,
                 address = uiState.address,
                 transactions = uiState.transactions,
+                assets = uiState.assets,
                 isLoading = uiState.isLoading,
                 onSendClick = {
                     viewModel.clearSendState()
@@ -124,16 +136,31 @@ fun MeowcoinNavHost(
         // ── Settings ──
         composable(Routes.SETTINGS) {
             var wif by remember { mutableStateOf<String?>(null) }
+            var seedPhrase by remember { mutableStateOf<String?>(null) }
 
             SettingsScreen(
                 address = uiState.address,
                 wif = wif,
+                seedPhrase = seedPhrase,
+                isHdWallet = uiState.isHdWallet,
+                biometricEnabled = uiState.biometricEnabled,
+                biometricAvailable = biometricAvailable,
+                allAddresses = uiState.allAddresses,
                 connectionState = connectionState,
                 serverHost = serverInfo?.host ?: "",
                 serverVersion = serverInfo?.serverVersion ?: "",
                 blockHeight = serverInfo?.blockHeight ?: 0,
                 onExportPrivateKey = {
                     wif = viewModel.getWIF()
+                },
+                onShowSeedPhrase = {
+                    seedPhrase = viewModel.getSeedPhrase()
+                },
+                onToggleBiometric = { enabled ->
+                    viewModel.setBiometricEnabled(enabled)
+                },
+                onDeriveNewAddress = {
+                    viewModel.deriveNextAddress()
                 },
                 onConnectCustomServer = { host, port, useSSL ->
                     viewModel.connectToCustomServer(host, port, useSSL)
