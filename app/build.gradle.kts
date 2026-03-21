@@ -116,7 +116,8 @@ dependencies {
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
 
     // Biometric authentication
-    implementation("androidx.biometric:biometric:1.2.0-alpha05")
+    implementation("androidx.biometric:biometric:1.1.0")
+    implementation("androidx.fragment:fragment-ktx:1.8.5")
 
     // DataStore for preferences
     implementation("androidx.datastore:datastore-preferences:1.1.1")
