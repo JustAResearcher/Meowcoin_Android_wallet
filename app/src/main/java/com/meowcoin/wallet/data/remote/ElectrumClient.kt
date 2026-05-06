@@ -461,22 +461,11 @@ class ElectrumClient(
 
     /**
      * Convert a Meowcoin address to an Electrum scripthash.
-     * Electrum uses reversed SHA-256 of the scriptPubKey.
+     * Electrum uses reversed SHA-256 of the scriptPubKey, so the script must match the
+     * address type — P2PKH, P2SH, or post-APEX SegWit/Taproot bech32.
      */
     fun addressToScriptHash(address: String): String {
-        val hash160 = com.meowcoin.wallet.crypto.MeowcoinAddress.toHash160(address)
-
-        // Build P2PKH scriptPubKey: OP_DUP OP_HASH160 <20 bytes> OP_EQUALVERIFY OP_CHECKSIG
-        val scriptPubKey = byteArrayOf(
-            0x76.toByte(),       // OP_DUP
-            0xA9.toByte(),       // OP_HASH160
-            0x14.toByte()        // Push 20 bytes
-        ) + hash160 + byteArrayOf(
-            0x88.toByte(),       // OP_EQUALVERIFY
-            0xAC.toByte()        // OP_CHECKSIG
-        )
-
-        // SHA-256 hash of the scriptPubKey, then reverse bytes
+        val scriptPubKey = com.meowcoin.wallet.crypto.MeowcoinAddress.toScriptPubKey(address)
         val sha256 = java.security.MessageDigest.getInstance("SHA-256").digest(scriptPubKey)
         return sha256.reversedArray().joinToString("") { "%02x".format(it) }
     }

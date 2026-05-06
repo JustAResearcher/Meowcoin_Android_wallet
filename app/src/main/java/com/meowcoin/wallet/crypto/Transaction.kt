@@ -157,8 +157,9 @@ object MeowcoinTransaction {
         for (output in outputs) {
             // Value in satoshis
             buffer.writeInt64LE(output.value)
-            // ScriptPubKey (P2PKH)
-            val scriptPubKey = buildP2PKHScript(output.address)
+            // ScriptPubKey: dispatched on the recipient's address type
+            // (P2PKH / P2SH / P2WPKH / P2WSH / P2TR — see MeowcoinAddress.toScriptPubKey)
+            val scriptPubKey = MeowcoinAddress.toScriptPubKey(output.address)
             buffer.writeVarInt(scriptPubKey.size.toLong())
             buffer.writeBytes(scriptPubKey)
         }
@@ -272,18 +273,6 @@ object MeowcoinTransaction {
             reader.readBytes(4) // sequence
         }
         return reader.position
-    }
-
-    private fun buildP2PKHScript(address: String): ByteArray {
-        val hash160 = MeowcoinAddress.toHash160(address)
-        return byteArrayOf(
-            0x76.toByte(),       // OP_DUP
-            0xA9.toByte(),       // OP_HASH160
-            0x14.toByte(),       // Push 20 bytes
-        ) + hash160 + byteArrayOf(
-            0x88.toByte(),       // OP_EQUALVERIFY
-            0xAC.toByte()        // OP_CHECKSIG
-        )
     }
 
     private fun doubleSha256(data: ByteArray): ByteArray {

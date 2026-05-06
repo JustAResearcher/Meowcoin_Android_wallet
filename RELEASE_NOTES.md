@@ -1,3 +1,15 @@
+# Meowcoin Wallet — Release Notes
+
+## v1.0.3 — APEX (Meow_v30.2.0) compatibility
+
+- **Bech32 / Bech32m address support (BIP173 / BIP350)** — the wallet can now send to native SegWit (`mewc1q…`) and Taproot (`mewc1p…`) addresses, which become available across the network from APEX.
+- **Address dispatch refactor** — sending to any of P2PKH (`M…`), P2SH (`m…`), P2WPKH, P2WSH, or P2TR now produces the correct `scriptPubKey` and Electrum `scripthash`.
+- **Fixed bech32 HRP** — was a dummy `mc`, now `mewc` (mainnet) and `tmewc` (testnet) per Meowcoin chainparams.
+
+Receive addresses remain legacy P2PKH for now (HD path `m/44'/1669'/0'/…`), so existing wallets keep working without migration.
+
+---
+
 # Meowcoin Wallet v1.0.1 — Release Notes
 
 **Release Date:** 2025  

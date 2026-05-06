@@ -202,15 +202,28 @@ class MeowcoinKeyPair private constructor(
 
 /**
  * Meowcoin address utilities.
- * Address version byte: 50 (0x32) → addresses start with 'M'
+ *
+ * Supported address types after the APEX upgrade (Meow_v30.2.0):
+ *   - Base58Check P2PKH:  version 50  → 'M...'
+ *   - Base58Check P2SH:   version 122 → 'm...'
+ *   - Bech32 P2WPKH:      witness v0, 20-byte hash → 'mewc1q...'
+ *   - Bech32 P2WSH:       witness v0, 32-byte hash → 'mewc1q...'
+ *   - Bech32m P2TR:       witness v1, 32-byte key  → 'mewc1p...'
  */
 object MeowcoinAddress {
-    // Meowcoin P2PKH version byte
+    // Meowcoin Base58 version bytes (chainparams.cpp)
     const val PUBKEY_ADDRESS_VERSION = 50  // 0x32 → 'M'
     const val SCRIPT_ADDRESS_VERSION = 122 // 0x7A → 'm' (P2SH)
 
+    /** Address type, used by callers that need to build the right scriptPubKey. */
+    enum class Type { P2PKH, P2SH, P2WPKH, P2WSH, P2TR }
+
+    /** Parsed view of a Meowcoin address with everything callers need to build a scriptPubKey. */
+    data class Parsed(val type: Type, val payload: ByteArray, val witnessVersion: Int = -1)
+
     /**
      * Derive a P2PKH address from a compressed public key.
+     * (Receive addresses stay P2PKH for now; SegWit/Taproot are supported as send targets only.)
      */
     fun fromPublicKey(compressedPubKey: ByteArray): String {
         val sha256 = MessageDigest.getInstance("SHA-256").digest(compressedPubKey)
@@ -219,20 +232,72 @@ object MeowcoinAddress {
     }
 
     /**
-     * Validate a Meowcoin address.
+     * Parse a Meowcoin address (base58 or bech32) on the given network HRP.
+     * Returns null if the string is not a valid Meowcoin address.
      */
-    fun isValid(address: String): Boolean {
-        return try {
+    fun parse(address: String, hrp: String = MeowcoinNetwork.BECH32_HRP): Parsed? {
+        // Try base58check first.
+        try {
             val (version, payload) = Base58.decodeChecked(address)
-            (version == PUBKEY_ADDRESS_VERSION || version == SCRIPT_ADDRESS_VERSION) &&
-                    payload.size == 20
-        } catch (e: Exception) {
-            false
+            if (payload.size == 20) {
+                when (version) {
+                    PUBKEY_ADDRESS_VERSION -> return Parsed(Type.P2PKH, payload)
+                    SCRIPT_ADDRESS_VERSION -> return Parsed(Type.P2SH, payload)
+                }
+            }
+        } catch (_: Exception) {
+            // fall through to bech32
+        }
+
+        // Try bech32 / bech32m.
+        val witness = Bech32.decodeSegwitAddress(hrp, address) ?: return null
+        return when {
+            witness.witnessVersion == 0 && witness.program.size == 20 ->
+                Parsed(Type.P2WPKH, witness.program, 0)
+            witness.witnessVersion == 0 && witness.program.size == 32 ->
+                Parsed(Type.P2WSH, witness.program, 0)
+            witness.witnessVersion == 1 && witness.program.size == 32 ->
+                Parsed(Type.P2TR, witness.program, 1)
+            else -> null
         }
     }
 
     /**
-     * Extract the hash160 (pubkey hash) from an address.
+     * Validate a Meowcoin address (any supported type).
+     */
+    fun isValid(address: String): Boolean = parse(address) != null
+
+    /**
+     * Build the scriptPubKey that locks an output to the given address.
+     */
+    fun toScriptPubKey(address: String, hrp: String = MeowcoinNetwork.BECH32_HRP): ByteArray {
+        val parsed = parse(address, hrp)
+            ?: throw IllegalArgumentException("Invalid Meowcoin address: $address")
+        return scriptPubKeyFor(parsed)
+    }
+
+    fun scriptPubKeyFor(parsed: Parsed): ByteArray = when (parsed.type) {
+        Type.P2PKH -> byteArrayOf(
+            0x76.toByte(),                       // OP_DUP
+            0xA9.toByte(), 0x14.toByte()         // OP_HASH160, push 20
+        ) + parsed.payload + byteArrayOf(
+            0x88.toByte(), 0xAC.toByte()         // OP_EQUALVERIFY, OP_CHECKSIG
+        )
+        Type.P2SH -> byteArrayOf(
+            0xA9.toByte(), 0x14.toByte()         // OP_HASH160, push 20
+        ) + parsed.payload + byteArrayOf(
+            0x87.toByte()                        // OP_EQUAL
+        )
+        Type.P2WPKH, Type.P2WSH, Type.P2TR -> {
+            val opVersion = if (parsed.witnessVersion == 0) 0x00.toByte() else (0x50 + parsed.witnessVersion).toByte()
+            byteArrayOf(opVersion, parsed.payload.size.toByte()) + parsed.payload
+        }
+    }
+
+    /**
+     * Extract the hash160 (pubkey hash) from a base58 P2PKH/P2SH address.
+     * Throws for bech32 addresses — callers expecting a 20-byte hash160 must check the
+     * address type with [parse] first.
      */
     fun toHash160(address: String): ByteArray {
         val (_, payload) = Base58.decodeChecked(address)

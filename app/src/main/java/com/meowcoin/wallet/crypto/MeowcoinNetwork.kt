@@ -30,8 +30,11 @@ object MeowcoinNetwork {
     val EXT_PUBLIC_KEY = byteArrayOf(0x04, 0x88.toByte(), 0xB2.toByte(), 0x1E)
     val EXT_SECRET_KEY = byteArrayOf(0x04, 0x88.toByte(), 0xAD.toByte(), 0xE4.toByte())
 
-    // ── Segwit ──
-    const val BECH32_HRP = "mc"
+    // ── Segwit / Taproot (APEX v30.2.0+: BIP141 SegWit + BIP341 Taproot active from height 1) ──
+    // HRP set in src/kernel/chainparams.cpp:
+    //   mainnet "mewc", testnet "tmewc", signet "smewc", regtest "rmewc"
+    const val BECH32_HRP = "mewc"
+    const val BECH32_HRP_TESTNET = "tmewc"
 
     // ── DNS Seeds ──
     val DNS_SEEDS = listOf(
