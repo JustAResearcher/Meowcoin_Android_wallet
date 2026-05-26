@@ -1,5 +1,18 @@
 # Meowcoin Wallet — Release Notes
 
+## v1.0.5 — HD wallet restore actually finds your coins
+
+Restoring an HD wallet from a seed phrase only ever derived one address (`m/44'/1669'/0'/0/0`), so funds sitting on a change address or any receiving index past 0 were invisible — the Settings screen showed `Addresses: 1` and balance `0.00000000` even when the seed was correct.
+
+- **Fix:** `WalletRepository.discoverHdAddresses()` walks both the receiving (`change=0`) and change (`change=1`) chains with the standard BIP44 gap limit of 20, querying Electrum `blockchain.scripthash.get_history` for each derived address. Any address with on-chain activity is persisted with its private key, so balances, history, and signing all work afterwards. The next-derivation pointers (`nextReceivingIndex`, `nextChangeIndex`) advance past the highest discovered index so future "New Address" and automatic change outputs don't collide with used ones.
+- **Restore flow:** `importHdWallet` now triggers discovery automatically once the Electrum connection comes up, before subscriptions, so newly-found addresses also receive push notifications.
+- **Settings → Address Management → Rescan Addresses:** new button to re-run discovery on demand without deleting and reimporting. Useful if you sent from another wallet that put funds on a change address, or if you used the same seed in a desktop wallet that derived past index 0.
+- **Cosmetic:** the "About" line at the bottom of Settings now shows the current version (was stuck on `v1.0.1` since the 1.0.1 release).
+
+### Limitations still present
+- Discovery is P2PKH-only. If your funds sit on a SegWit (`mewc1q…`) or Taproot (`mewc1p…`) address derived from the same seed in another wallet, they won't appear. A separate `m/84'/1669'/…` derivation path would be needed.
+- Discovery runs synchronously inside the loading spinner — for a clean wallet it's ~40 sequential Electrum round-trips. Fast in practice; could be batched if it ever feels slow.
+
 ## v1.0.4 — APEX electrum server migration
 
 The default Electrum server list and the cleartext-traffic whitelist were pointing at hosts that went offline with the APEX upgrade, so the wallet could not connect for many users. Replaced with the current canonical `electrs-mewc` (protocol 1.4) endpoints published by the Meowcoin Foundation:

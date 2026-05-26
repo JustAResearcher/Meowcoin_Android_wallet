@@ -1,5 +1,5 @@
 <en-US>
+Fix: restoring an HD wallet from a seed phrase now scans for all used addresses instead of only deriving the first one. Funds on change addresses or any address past index 0 are no longer invisible.
 
-
-Your MEWC, your keys.
+New: Settings -> Address Management -> "Rescan Addresses" re-runs discovery on demand if you've sent from another wallet or used the same seed elsewhere.
 </en-US>

@@ -164,6 +164,92 @@ class WalletRepository(
     }
 
     /**
+     * BIP44 address discovery for a restored HD wallet.
+     *
+     * Walks both the receiving (change=0) and change (change=1) chains, querying
+     * Electrum for each derived address's history and stopping a chain once
+     * [HD_GAP_LIMIT] consecutive addresses have no on-chain activity. Any used
+     * address found is persisted with its private key so balances, history, and
+     * future signing work.
+     *
+     * Requires an active Electrum connection. Idempotent — already-stored
+     * addresses are skipped, not duplicated.
+     *
+     * @return Total number of newly-stored addresses
+     */
+    suspend fun discoverHdAddresses(): Int = withContext(Dispatchers.IO) {
+        require(secureKeyStore.isHdWallet()) { "Not an HD wallet" }
+        val mnemonic = secureKeyStore.getSeedPhrase()
+            ?: throw IllegalStateException("No seed phrase found")
+        val hdWallet = HdWallet.fromMnemonic(mnemonic)
+
+        var totalDiscovered = 0
+        var maxReceiving = -1
+        var maxChange = -1
+
+        for (chain in 0..1) {
+            var gap = 0
+            var index = 0
+            while (gap < HD_GAP_LIMIT) {
+                val keyPair = if (chain == 0) hdWallet.deriveReceivingKey(index)
+                else hdWallet.deriveChangeKey(index)
+                val address = keyPair.toAddress()
+
+                val hasHistory = try {
+                    val scriptHash = electrumClient.addressToScriptHash(address)
+                    electrumClient.getHistory(scriptHash).isNotEmpty()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Discovery history query failed for $chain/$index: ${e.message}")
+                    false
+                }
+
+                if (hasHistory) {
+                    gap = 0
+                    if (chain == 0) maxReceiving = index else maxChange = index
+
+                    if (secureKeyStore.getPrivateKey(address) == null) {
+                        secureKeyStore.storePrivateKey(address, keyPair.privateKeyHex())
+                        walletDao.insertWallet(
+                            WalletEntity(
+                                address = address,
+                                label = if (chain == 0) "Address #${index + 1}" else "Change #${index + 1}",
+                                createdAt = System.currentTimeMillis(),
+                                isActive = true,
+                                derivationPath = "m/44'/1669'/0'/$chain/$index",
+                                derivationIndex = index,
+                                isChange = chain == 1
+                            )
+                        )
+                        totalDiscovered++
+                        Log.i(TAG, "Discovered $address at m/44'/1669'/0'/$chain/$index")
+                    }
+                } else {
+                    gap++
+                }
+                index++
+            }
+        }
+
+        // Advance next-derivation pointers past the discovered range so future
+        // "New Address" / change-output derivations don't collide with used ones.
+        if (maxReceiving >= 0) {
+            val next = maxReceiving + 1
+            if (secureKeyStore.getNextReceivingIndex() < next) {
+                secureKeyStore.storeNextReceivingIndex(next)
+            }
+        }
+        if (maxChange >= 0) {
+            val next = maxChange + 1
+            if (secureKeyStore.getNextChangeIndex() < next) {
+                secureKeyStore.storeNextChangeIndex(next)
+            }
+        }
+
+        Log.i(TAG, "Discovery done: +$totalDiscovered addresses (recv max=$maxReceiving, change max=$maxChange)")
+        totalDiscovered
+    }
+
+    /**
      * Legacy: create a single random key wallet (non-HD).
      */
     suspend fun createWallet(label: String = "Main Wallet"): String = withContext(Dispatchers.IO) {

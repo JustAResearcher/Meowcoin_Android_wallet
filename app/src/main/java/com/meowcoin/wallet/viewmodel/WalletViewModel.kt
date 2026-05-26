@@ -108,7 +108,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                     )
                 }
                 observeWalletData(address)
-                connectAndSync(address)
+                connectAndSync(address, runDiscovery = true)
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(isLoading = false, error = "Import failed: ${e.message}")
@@ -188,12 +188,21 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     //  Network Connection
     // ═══════════════════════════════════════════
 
-    private fun connectAndSync(address: String) {
+    private fun connectAndSync(address: String, runDiscovery: Boolean = false) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
                 val connected = repository.connectToNetwork()
                 if (connected) {
+                    // BIP44 address discovery — only on freshly-restored HD wallets,
+                    // before subscriptions so newly-found addresses are wired up too.
+                    if (runDiscovery && secureKeyStore.isHdWallet()) {
+                        try {
+                            repository.discoverHdAddresses()
+                        } catch (e: Exception) {
+                            _uiState.update { it.copy(error = "Address scan failed: ${e.message}") }
+                        }
+                    }
                     // Subscribe to all addresses for HD wallets
                     if (secureKeyStore.isHdWallet()) {
                         repository.subscribeToAllAddresses()
@@ -253,6 +262,39 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         val address = _uiState.value.address
         if (address.isNotEmpty()) {
             connectAndSync(address)
+        }
+    }
+
+    /**
+     * On-demand BIP44 address discovery for an existing HD wallet. Connects if
+     * not already connected, walks both chains with gap_limit=20, then
+     * re-subscribes and refreshes so newly-found addresses contribute to the
+     * displayed balance and history.
+     */
+    fun rescanAddresses() {
+        viewModelScope.launch {
+            if (!secureKeyStore.isHdWallet()) {
+                _uiState.update { it.copy(error = "Rescan is only available for HD wallets") }
+                return@launch
+            }
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                if (connectionState.value != ElectrumClient.ConnectionState.CONNECTED) {
+                    val ok = repository.connectToNetwork()
+                    if (!ok) {
+                        _uiState.update { it.copy(error = "Could not connect to Electrum") }
+                        return@launch
+                    }
+                }
+                repository.discoverHdAddresses()
+                repository.subscribeToAllAddresses()
+                repository.refreshAllAddresses()
+                updateFiatBalance()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Rescan failed: ${e.message}") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 

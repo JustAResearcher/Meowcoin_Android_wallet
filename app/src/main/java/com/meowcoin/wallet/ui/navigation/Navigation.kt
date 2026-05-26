@@ -162,6 +162,9 @@ fun MeowcoinNavHost(
                 onDeriveNewAddress = {
                     viewModel.deriveNextAddress()
                 },
+                onRescanAddresses = {
+                    viewModel.rescanAddresses()
+                },
                 onConnectCustomServer = { host, port, useSSL ->
                     viewModel.connectToCustomServer(host, port, useSSL)
                 },

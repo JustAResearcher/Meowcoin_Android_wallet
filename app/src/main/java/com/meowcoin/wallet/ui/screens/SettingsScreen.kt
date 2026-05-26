@@ -36,6 +36,7 @@ fun SettingsScreen(
     onShowSeedPhrase: () -> Unit,
     onToggleBiometric: (Boolean) -> Unit,
     onDeriveNewAddress: () -> Unit,
+    onRescanAddresses: () -> Unit,
     onConnectCustomServer: (host: String, port: Int, useSSL: Boolean) -> Unit,
     onReconnect: () -> Unit,
     onDeleteWallet: () -> Unit,
@@ -270,6 +271,21 @@ fun SettingsScreen(
                                 Text("New Address")
                             }
                         }
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedButton(
+                            onClick = onRescanAddresses,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(Icons.Default.Search, null, modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("Rescan Addresses")
+                        }
+                        Text(
+                            "Re-scans the chain for any used addresses derived from your seed.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
                     }
                 }
             }
@@ -403,7 +419,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                "Meowcoin Wallet v1.0.1",
+                "Meowcoin Wallet v1.0.5",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
