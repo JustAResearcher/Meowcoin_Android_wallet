@@ -2,9 +2,11 @@
 <network-security-config>
     <!-- Allow cleartext for Electrum TCP connections (non-SSL fallback) -->
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">electrum.mewccrypto.com</domain>
-        <domain includeSubdomains="true">meowelectrum.xyz</domain>
-        <domain includeSubdomains="true">meowelectrum2.testtopper.biz</domain>
+        <domain includeSubdomains="true">electrs.mewccrypto.com</domain>
+        <domain includeSubdomains="true">electrs2.mewccrypto.com</domain>
+        <domain includeSubdomains="true">electrs3.meowcoin.org</domain>
+        <domain includeSubdomains="true">electrs4.meowcoin.org</domain>
+        <domain includeSubdomains="true">electrs5.meowcoin.org</domain>
     </domain-config>
     <base-config cleartextTrafficPermitted="false">
         <trust-anchors>

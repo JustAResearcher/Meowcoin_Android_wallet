@@ -1,5 +1,17 @@
 # Meowcoin Wallet — Release Notes
 
+## v1.0.4 — APEX electrum server migration
+
+The default Electrum server list and the cleartext-traffic whitelist were pointing at hosts that went offline with the APEX upgrade, so the wallet could not connect for many users. Replaced with the current canonical `electrs-mewc` (protocol 1.4) endpoints published by the Meowcoin Foundation:
+
+- `electrs.mewccrypto.com`
+- `electrs2.mewccrypto.com`
+- `electrs3.meowcoin.org`
+- `electrs4.meowcoin.org`
+- `electrs5.meowcoin.org`
+
+All five serve SSL on 50002; the client tries SSL first and falls back to TCP/50001 where available. No protocol changes — the wallet already negotiates Electrum 1.4, which matches the new servers.
+
 ## v1.0.3 — APEX (Meow_v30.2.0) compatibility
 
 - **Bech32 / Bech32m address support (BIP173 / BIP350)** — the wallet can now send to native SegWit (`mewc1q…`) and Taproot (`mewc1p…`) addresses, which become available across the network from APEX.

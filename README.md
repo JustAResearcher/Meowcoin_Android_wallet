@@ -152,9 +152,13 @@ The wallet **never downloads the full blockchain**. Instead, it asks Electrum se
 
 | Server | TCP Port | SSL Port |
 |--------|----------|----------|
-| `electrum.mewccrypto.com` | 50001 | 50002 |
-| `meowelectrum.xyz` | 50001 | 50002 |
-| `meowelectrum2.testtopper.biz` | 50001 | 50002 |
+| `electrs.mewccrypto.com` | 50001 | 50002 |
+| `electrs2.mewccrypto.com` | 50001 | 50002 |
+| `electrs3.meowcoin.org` | 50001 | 50002 |
+| `electrs4.meowcoin.org` | 50001 | 50002 |
+| `electrs5.meowcoin.org` | 50001 | 50002 |
+
+Servers run [electrs-mewc](https://github.com/Meowcoin-Foundation/electrs-mewc) on protocol 1.4. All endpoints serve SSL on 50002; the client tries SSL first and falls back to TCP/50001 where available.
 
 You can configure a custom server in **Settings** if you run your own node.
 

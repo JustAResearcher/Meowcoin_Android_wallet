@@ -52,10 +52,16 @@ object MeowcoinNetwork {
     )
 
     // ── Electrum (Stratum) Servers ──
+    // APEX (v30.2.0+) servers run electrs-mewc, protocol 1.4. All endpoints serve
+    // SSL/50002; only some advertise plain TCP/50001 — the client tries SSL first
+    // and falls back. Source of truth:
+    //   https://github.com/Meowcoin-Foundation/electrum-meowcoin/blob/master/electrum/servers.json
     val ELECTRUM_SERVERS = listOf(
-        ElectrumServer("electrum.mewccrypto.com", 50001, 50002),
-        ElectrumServer("meowelectrum.xyz", 50001, 50002),
-        ElectrumServer("meowelectrum2.testtopper.biz", 50001, 50002)
+        ElectrumServer("electrs.mewccrypto.com", 50001, 50002),
+        ElectrumServer("electrs2.mewccrypto.com", 50001, 50002),
+        ElectrumServer("electrs3.meowcoin.org", 50001, 50002),
+        ElectrumServer("electrs4.meowcoin.org", 50001, 50002),
+        ElectrumServer("electrs5.meowcoin.org", 50001, 50002)
     )
 
     // ── Block Parameters ──
