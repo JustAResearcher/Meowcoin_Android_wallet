@@ -524,6 +524,8 @@ class WalletRepository(
             }
 
             // ── Fetch Transaction History ──
+            val myAddresses = (walletDao.getActiveAddresses() + address).toSet()
+            val prevTxCache = mutableMapOf<String, JsonObject>()
             val history = electrumClient.getHistory(scriptHash)
             for (item in history) {
                 val existing = transactionDao.getTransaction(item.txHash)
@@ -532,7 +534,7 @@ class WalletRepository(
                 try {
                     val txJson = electrumClient.getTransaction(item.txHash, verbose = true)
                     val txObj = txJson.asJsonObject
-                    val txEntity = parseTxFromElectrum(txObj, address, item.height)
+                    val txEntity = parseTxFromElectrum(txObj, address, myAddresses, item.height, prevTxCache)
                     transactionDao.insertTransaction(txEntity)
                 } catch (e: Exception) {
                     Log.w(TAG, "Failed to fetch tx ${item.txHash}: ${e.message}")
@@ -665,10 +667,12 @@ class WalletRepository(
     //  Helpers
     // ═══════════════════════════════════════════
 
-    private fun parseTxFromElectrum(
+    private suspend fun parseTxFromElectrum(
         txObj: JsonObject,
-        myAddress: String,
-        height: Int
+        walletAddress: String,
+        myAddresses: Set<String>,
+        height: Int,
+        prevTxCache: MutableMap<String, JsonObject>
     ): TransactionEntity {
         val txId = txObj.get("txid").asString
         val time = txObj.get("time")?.asLong ?: (System.currentTimeMillis() / 1000)
@@ -677,16 +681,39 @@ class WalletRepository(
         val vin = txObj.getAsJsonArray("vin")
         val vout = txObj.getAsJsonArray("vout")
 
+        // Standard electrum/electrs servers do NOT enrich vin entries with the
+        // previous output's address/value — those fields live in the prev tx.
+        // Resolve each input by fetching the prev tx (cached) and reading vout[n].
         var isSent = false
         var sentFromAmount = 0L
+        var firstInputAddress = ""
+
         vin?.forEach { input ->
             val obj = input.asJsonObject
-            val addr = obj.get("address")?.asString
-                ?: obj.getAsJsonObject("scriptSig")?.get("address")?.asString
-            if (addr == myAddress) {
+            val prevTxid = obj.get("txid")?.asString ?: return@forEach  // coinbase
+            val prevVoutIdx = obj.get("vout")?.asInt ?: return@forEach
+
+            val prevTxObj = try {
+                prevTxCache.getOrPut(prevTxid) {
+                    electrumClient.getTransaction(prevTxid, verbose = true).asJsonObject
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to fetch prev tx $prevTxid: ${e.message}")
+                return@forEach
+            }
+
+            val prevVouts = prevTxObj.getAsJsonArray("vout") ?: return@forEach
+            if (prevVoutIdx < 0 || prevVoutIdx >= prevVouts.size()) return@forEach
+            val prevOut = prevVouts.get(prevVoutIdx).asJsonObject
+            val prevAddr = extractAddress(prevOut)
+            val prevValueSat = extractValueSat(prevOut)
+
+            if (prevAddr != null && firstInputAddress.isEmpty()) {
+                firstInputAddress = prevAddr
+            }
+            if (prevAddr != null && prevAddr in myAddresses) {
                 isSent = true
-                sentFromAmount += (obj.get("valueSat")?.asLong
-                    ?: ((obj.get("value")?.asDouble ?: 0.0) * 100_000_000).toLong())
+                sentFromAmount += prevValueSat
             }
         }
 
@@ -694,13 +721,10 @@ class WalletRepository(
         var sentToAddress = ""
         vout?.forEach { output ->
             val obj = output.asJsonObject
-            val scriptPubKey = obj.getAsJsonObject("scriptPubKey")
-            val addresses = scriptPubKey?.getAsJsonArray("addresses")
-            val addr = addresses?.firstOrNull()?.asString
-            val valueSat = ((obj.get("value")?.asString?.toDoubleOrNull()
-                ?: 0.0) * 100_000_000).toLong()
+            val addr = extractAddress(obj)
+            val valueSat = extractValueSat(obj)
 
-            if (addr == myAddress) {
+            if (addr != null && addr in myAddresses) {
                 receivedAmount += valueSat
             } else if (addr != null && sentToAddress.isEmpty()) {
                 sentToAddress = addr
@@ -713,22 +737,52 @@ class WalletRepository(
             receivedAmount
         }
 
-        val fromAddress = if (isSent) myAddress else {
-            vin?.firstOrNull()?.asJsonObject?.get("address")?.asString ?: ""
-        }
+        val fromAddress = if (isSent) walletAddress else firstInputAddress
 
         return TransactionEntity(
             txId = txId,
-            walletAddress = myAddress,
+            walletAddress = walletAddress,
             amount = amount,
             fee = 0,
-            toAddress = if (isSent) sentToAddress else myAddress,
+            toAddress = if (isSent) sentToAddress else walletAddress,
             fromAddress = fromAddress,
             confirmations = confirmations,
             blockHeight = height,
             timestamp = time * 1000,
             status = if (confirmations > 0) "confirmed" else "pending"
         )
+    }
+
+    /**
+     * Read the destination address from a vout object. Supports both the modern
+     * Bitcoin Core 22+ singular `scriptPubKey.address` field and the legacy
+     * plural `scriptPubKey.addresses` array. Returns null for non-standard
+     * outputs (OP_RETURN, bare multisig without a representative address, etc).
+     */
+    private fun extractAddress(voutObj: JsonObject): String? {
+        val scriptPubKey = voutObj.getAsJsonObject("scriptPubKey") ?: return null
+        scriptPubKey.get("address")?.let {
+            if (!it.isJsonNull) return it.asString
+        }
+        return scriptPubKey.getAsJsonArray("addresses")?.firstOrNull()?.asString
+    }
+
+    /**
+     * Read the satoshi value from a vout object. Prefers integer `valueSat`
+     * when present, otherwise converts decimal `value` (MEWC) to satoshis.
+     */
+    private fun extractValueSat(voutObj: JsonObject): Long {
+        voutObj.get("valueSat")?.let {
+            if (!it.isJsonNull) return it.asLong
+        }
+        val valEl = voutObj.get("value") ?: return 0L
+        if (valEl.isJsonNull) return 0L
+        val asDouble = try {
+            valEl.asDouble
+        } catch (_: Exception) {
+            valEl.asString?.toDoubleOrNull() ?: 0.0
+        }
+        return (asDouble * 100_000_000).toLong()
     }
 
     private fun buildP2PKHScriptHex(hash160: ByteArray): String {

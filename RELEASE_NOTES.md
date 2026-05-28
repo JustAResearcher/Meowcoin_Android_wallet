@@ -1,5 +1,13 @@
 # Meowcoin Wallet — Release Notes
 
+## v1.0.6 — Transaction history shows correct amounts and direction
+
+Every transaction in the history list rendered as `Sent -0.0000 MEWC` to the user's own address, regardless of what the transaction actually was. The MEWC moved and the counterparty were both wrong.
+
+- **Root cause:** `parseTxFromElectrum` couldn't read the data it needed from the server response. It assumed each `vin` entry carried the previous output's `address` and `value` fields (standard electrum/electrs servers don't enrich vin — those fields live in the prev tx itself), and it read `scriptPubKey.addresses` (the plural array, deprecated in Bitcoin Core 22+) while meowcoind now emits the singular `scriptPubKey.address`. With both reads returning null, every parse fell through to `isSent = false`, `receivedAmount = 0`, `toAddress = myAddress`, which displays as "Sent -0.0000" pointing at the user's own address.
+- **Fix:** vin is now resolved canonically — for each input, the previous transaction is fetched via `blockchain.transaction.get` (cached per refresh) and `vout[n]` is inspected for the spent output's address/value. Output address extraction accepts both `scriptPubKey.address` and the legacy `scriptPubKey.addresses` array. Output matching now uses the full set of HD wallet addresses, so change going to a different derivation index is correctly counted as "mine" instead of being treated as a payment to a stranger.
+- **DB migration v2 → v3:** the cached, mis-parsed `transactions` and `utxos` rows are wiped on first launch of v1.0.6 so the next refresh re-fetches with the corrected logic. The `wallets` table (addresses, derivation indices) is preserved — no seed re-entry needed.
+
 ## v1.0.5 — HD wallet restore actually finds your coins
 
 Restoring an HD wallet from a seed phrase only ever derived one address (`m/44'/1669'/0'/0/0`), so funds sitting on a change address or any receiving index past 0 were invisible — the Settings screen showed `Addresses: 1` and balance `0.00000000` even when the seed was correct.

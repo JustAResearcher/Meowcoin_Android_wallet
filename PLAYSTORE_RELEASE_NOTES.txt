@@ -1,5 +1,5 @@
 <en-US>
-Fix: restoring an HD wallet from a seed phrase now scans for all used addresses instead of only deriving the first one. Funds on change addresses or any address past index 0 are no longer invisible.
+Fix: transaction history was rendering every entry as "Sent -0.0000 MEWC" pointing at your own address. The parser couldn't read the address/value fields from the current Meowcoin node response format. Sent vs received, amounts, and counterparty addresses now display correctly.
 
-New: Settings -> Address Management -> "Rescan Addresses" re-runs discovery on demand if you've sent from another wallet or used the same seed elsewhere.
+Note: on first launch after upgrading, cached history is cleared and re-synced from the network. Your seed and addresses are preserved.
 </en-US>
