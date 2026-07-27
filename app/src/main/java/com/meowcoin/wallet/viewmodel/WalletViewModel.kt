@@ -27,6 +27,10 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     private val _sendState = MutableStateFlow(SendUiState())
     val sendState: StateFlow<SendUiState> = _sendState.asStateFlow()
 
+    private val _consolidationState = MutableStateFlow(ConsolidationUiState())
+    val consolidationState: StateFlow<ConsolidationUiState> =
+        _consolidationState.asStateFlow()
+
     private val _mnemonicState = MutableStateFlow(MnemonicUiState())
     val mnemonicState: StateFlow<MnemonicUiState> = _mnemonicState.asStateFlow()
 
@@ -209,18 +213,14 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                     } else {
                         repository.subscribeToAddress(address)
                     }
-                    repository.subscribeToBlocks { _ ->
-                        viewModelScope.launch { refreshData() }
-                    }
-                    // Initial sync
-                    if (secureKeyStore.isHdWallet()) {
-                        repository.refreshAllAddresses()
-                    } else {
-                        repository.refreshWalletData(address)
-                    }
+                    repository.subscribeToBlocks { _ -> }
+                    // Make the wallet usable as soon as its spendable coins are
+                    // current. Transaction history continues in the background.
+                    refreshBalances(address)
                     // Fetch fiat price
                     try { repository.fetchFiatPrice() } catch (_: Exception) {}
                     updateFiatBalance()
+                    refreshHistoryInBackground(address)
                 }
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = "Connection failed: ${e.message}") }
@@ -241,11 +241,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                     if (address.isNotEmpty()) {
                         if (secureKeyStore.isHdWallet()) {
                             repository.subscribeToAllAddresses()
-                            repository.refreshAllAddresses()
                         } else {
                             repository.subscribeToAddress(address)
-                            repository.refreshWalletData(address)
                         }
+                        refreshBalances(address)
+                        refreshHistoryInBackground(address)
                     }
                 } else {
                     _uiState.update { it.copy(error = "Failed to connect to $host:$port") }
@@ -254,6 +254,25 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 _uiState.update { it.copy(error = "Connection error: ${e.message}") }
             } finally {
                 _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    private suspend fun refreshBalances(address: String) {
+        val result = if (secureKeyStore.isHdWallet()) {
+            repository.refreshAllBalances()
+        } else {
+            repository.refreshWalletBalance(address)
+        }
+        result.getOrThrow()
+    }
+
+    private fun refreshHistoryInBackground(address: String) {
+        viewModelScope.launch {
+            if (secureKeyStore.isHdWallet()) {
+                repository.refreshAllHistories()
+            } else {
+                repository.refreshWalletHistory(address)
             }
         }
     }
@@ -288,8 +307,9 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
                 }
                 repository.discoverHdAddresses()
                 repository.subscribeToAllAddresses()
-                repository.refreshAllAddresses()
+                refreshBalances(_uiState.value.address)
                 updateFiatBalance()
+                refreshHistoryInBackground(_uiState.value.address)
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = "Rescan failed: ${e.message}") }
             } finally {
@@ -370,13 +390,10 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                if (secureKeyStore.isHdWallet()) {
-                    repository.refreshAllAddresses()
-                } else {
-                    repository.refreshWalletData(address)
-                }
+                refreshBalances(address)
                 try { repository.fetchFiatPrice() } catch (_: Exception) {}
                 updateFiatBalance()
+                refreshHistoryInBackground(address)
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = "Refresh failed: ${e.message}") }
             } finally {
@@ -416,6 +433,52 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun prepareConsolidation() {
+        viewModelScope.launch {
+            _consolidationState.value = ConsolidationUiState(isLoading = true)
+            val previewResult = try {
+                refreshBalances(_uiState.value.address)
+                repository.getConsolidationPreview()
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+            previewResult.fold(
+                onSuccess = { preview ->
+                    _consolidationState.value = ConsolidationUiState(preview = preview)
+                },
+                onFailure = { error ->
+                    _consolidationState.value = ConsolidationUiState(error = error.message)
+                }
+            )
+        }
+    }
+
+    fun consolidateUtxos() {
+        if (_consolidationState.value.isConsolidating) return
+        viewModelScope.launch {
+            _consolidationState.update {
+                it.copy(isConsolidating = true, error = null, successTxId = null)
+            }
+            repository.consolidateUtxos().fold(
+                onSuccess = { txId ->
+                    _consolidationState.update {
+                        it.copy(isConsolidating = false, successTxId = txId)
+                    }
+                    refreshData()
+                },
+                onFailure = { error ->
+                    _consolidationState.update {
+                        it.copy(isConsolidating = false, error = error.message)
+                    }
+                }
+            )
+        }
+    }
+
+    fun clearConsolidationState() {
+        _consolidationState.value = ConsolidationUiState()
+    }
+
     // ═══════════════════════════════════════════
     //  Biometric
     // ═══════════════════════════════════════════
@@ -449,6 +512,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             repository.deleteAllWalletData()
             _uiState.value = WalletUiState()
             _sendState.value = SendUiState()
+            _consolidationState.value = ConsolidationUiState()
             _mnemonicState.value = MnemonicUiState()
         }
     }
@@ -483,6 +547,14 @@ data class WalletUiState(
 
 data class SendUiState(
     val isSending: Boolean = false,
+    val error: String? = null,
+    val successTxId: String? = null
+)
+
+data class ConsolidationUiState(
+    val isLoading: Boolean = false,
+    val isConsolidating: Boolean = false,
+    val preview: WalletRepository.ConsolidationPreview? = null,
     val error: String? = null,
     val successTxId: String? = null
 )

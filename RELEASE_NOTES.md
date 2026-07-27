@@ -1,5 +1,18 @@
 # Meowcoin Wallet — Release Notes
 
+## v1.0.7 — Large-wallet loading and UTXO consolidation
+
+- **Large wallets no longer stay behind “Fetching your coins…” while transaction
+  history is rebuilt.** Spendable UTXOs and the balance load first; detailed
+  history continues in the background.
+- **Electrum subscriptions now work on Android.** JSON-RPC writes are dispatched
+  off the main thread, fixing `NetworkOnMainThreadException` after a server had
+  already reported “Connected.”
+- **Consolidate UTXOs** in Settings previews one confirmed, same-key batch,
+  including its input count, fee, output amount, and expected remaining UTXO
+  count. It requires explicit confirmation and broadcasts a self-transfer of no
+  more than 500 inputs.
+
 ## v1.0.6 — Transaction history shows correct amounts and direction
 
 Every transaction in the history list rendered as `Sent -0.0000 MEWC` to the user's own address, regardless of what the transaction actually was. The MEWC moved and the counterparty were both wrong.

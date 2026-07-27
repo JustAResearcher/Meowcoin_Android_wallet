@@ -14,9 +14,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.meowcoin.wallet.data.local.WalletEntity
 import com.meowcoin.wallet.data.remote.ElectrumClient
+import com.meowcoin.wallet.data.repository.WalletRepository
 import com.meowcoin.wallet.ui.theme.MeowGreen
 import com.meowcoin.wallet.ui.theme.MeowOrange
 import com.meowcoin.wallet.ui.theme.MeowRed
+import com.meowcoin.wallet.viewmodel.ConsolidationUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,11 +34,15 @@ fun SettingsScreen(
     serverHost: String,
     serverVersion: String,
     blockHeight: Int,
+    consolidationState: ConsolidationUiState,
     onExportPrivateKey: () -> Unit,
     onShowSeedPhrase: () -> Unit,
     onToggleBiometric: (Boolean) -> Unit,
     onDeriveNewAddress: () -> Unit,
     onRescanAddresses: () -> Unit,
+    onPrepareConsolidation: () -> Unit,
+    onConsolidate: () -> Unit,
+    onDismissConsolidation: () -> Unit,
     onConnectCustomServer: (host: String, port: Int, useSSL: Boolean) -> Unit,
     onReconnect: () -> Unit,
     onDeleteWallet: () -> Unit,
@@ -47,6 +53,7 @@ fun SettingsScreen(
     var showSeedPhrase by remember { mutableStateOf(false) }
     var showCustomServer by remember { mutableStateOf(false) }
     var showAddresses by remember { mutableStateOf(false) }
+    var showConsolidation by remember { mutableStateOf(false) }
     var customHost by remember { mutableStateOf("") }
     var customPort by remember { mutableStateOf("50002") }
     var customSSL by remember { mutableStateOf(true) }
@@ -210,6 +217,47 @@ fun SettingsScreen(
                     SettingRow("Wallet Type", if (isHdWallet) "HD (BIP44)" else "Single Key")
                     if (isHdWallet) {
                         SettingRow("Addresses", "${allAddresses.size}")
+                    }
+                }
+            }
+
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        "UTXO Management",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        "Combine many confirmed outputs into one to make future sends smaller.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    OutlinedButton(
+                        onClick = {
+                            showConsolidation = true
+                            onPrepareConsolidation()
+                        },
+                        enabled = connectionState == ElectrumClient.ConnectionState.CONNECTED,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.AccountBalanceWallet, null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("Consolidate UTXOs")
+                    }
+                    if (connectionState != ElectrumClient.ConnectionState.CONNECTED) {
+                        Text(
+                            "Connect to an Electrum server before consolidating.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
                     }
                 }
             }
@@ -419,12 +467,126 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                "Meowcoin Wallet v1.0.5",
+                "Meowcoin Wallet v1.0.7",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
+    }
+
+    if (showConsolidation) {
+        val preview = consolidationState.preview
+        val closeDialog = {
+            showConsolidation = false
+            onDismissConsolidation()
+        }
+        AlertDialog(
+            onDismissRequest = {
+                if (!consolidationState.isConsolidating) closeDialog()
+            },
+            title = {
+                Text(
+                    if (consolidationState.successTxId != null) {
+                        "Consolidation Sent"
+                    } else {
+                        "Consolidate UTXOs?"
+                    }
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    when {
+                        consolidationState.isLoading -> {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text("Checking confirmed UTXOs...")
+                            }
+                        }
+
+                        consolidationState.successTxId != null -> {
+                            Text("The self-transfer was broadcast successfully.")
+                            SettingRow(
+                                "Transaction",
+                                "${consolidationState.successTxId.take(12)}..."
+                            )
+                            Text(
+                                "Wait for it to confirm before running another consolidation.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        consolidationState.error != null -> {
+                            Text(consolidationState.error, color = MeowRed)
+                        }
+
+                        preview != null -> {
+                            SettingRow("Inputs", preview.inputCount.toString())
+                            SettingRow(
+                                "Total",
+                                "${WalletRepository.formatMEWC(preview.totalInput)} MEWC"
+                            )
+                            SettingRow(
+                                "Estimated fee",
+                                "${WalletRepository.formatMEWC(preview.estimatedFee)} MEWC"
+                            )
+                            SettingRow(
+                                "New output",
+                                "${WalletRepository.formatMEWC(preview.outputAmount)} MEWC"
+                            )
+                            SettingRow(
+                                "UTXOs after confirmation",
+                                "~${preview.remainingUtxoCount}"
+                            )
+                            Text(
+                                "This broadcasts one self-transfer from " +
+                                    "${preview.sourceAddress.take(10)}... to your main wallet. " +
+                                    "Only confirmed UTXOs owned by the same key are included.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                when {
+                    consolidationState.successTxId != null ||
+                        consolidationState.error != null -> {
+                        TextButton(onClick = closeDialog) { Text("Close") }
+                    }
+
+                    preview != null -> {
+                        Button(
+                            onClick = onConsolidate,
+                            enabled = !consolidationState.isConsolidating,
+                            colors = ButtonDefaults.buttonColors(containerColor = MeowOrange)
+                        ) {
+                            if (consolidationState.isConsolidating) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(18.dp),
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(Modifier.width(6.dp))
+                                Text("Broadcasting...")
+                            } else {
+                                Text("Consolidate")
+                            }
+                        }
+                    }
+                }
+            },
+            dismissButton = {
+                if (preview != null &&
+                    consolidationState.successTxId == null &&
+                    !consolidationState.isConsolidating
+                ) {
+                    TextButton(onClick = closeDialog) { Text("Cancel") }
+                }
+            }
+        )
     }
 
     // Delete confirmation

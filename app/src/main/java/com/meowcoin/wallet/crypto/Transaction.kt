@@ -24,6 +24,11 @@ object MeowcoinTransaction {
     // Default fee rate in sat/byte
     const val DEFAULT_FEE_RATE = 1000L
 
+    // Cap on inputs per transaction. ~500 P2PKH inputs ≈ 74 KB, safely under the
+    // 100 KB standard-tx relay limit. Beyond this a single send can't be relayed and
+    // silently times out on broadcast — fail fast with an actionable message instead.
+    const val MAX_TX_INPUTS = 500
+
     data class UTXO(
         val txHash: String,     // Transaction hash (hex, 32 bytes)
         val outputIndex: Int,   // Output index in the transaction
@@ -98,6 +103,45 @@ object MeowcoinTransaction {
     }
 
     /**
+     * Spend a fixed batch of UTXOs into one self-owned output.
+     *
+     * Unlike [buildTransaction], consolidation must consume every supplied input;
+     * selecting only enough inputs for a target amount would defeat the operation.
+     */
+    fun buildConsolidationTransaction(
+        keyPair: MeowcoinKeyPair,
+        utxos: List<UTXO>,
+        destinationAddress: String,
+        feeRate: Long = DEFAULT_FEE_RATE
+    ): SignedTransaction {
+        require(utxos.size >= 2) { "At least two UTXOs are required to consolidate" }
+        require(utxos.size <= MAX_TX_INPUTS) {
+            "A consolidation can use at most $MAX_TX_INPUTS inputs"
+        }
+        require(MeowcoinAddress.isValid(destinationAddress)) {
+            "Invalid consolidation destination"
+        }
+
+        val totalInput = utxos.sumOf { it.value }
+        val fee = estimateFee(utxos.size, 1, feeRate)
+        val outputValue = totalInput - fee
+        require(outputValue > DUST_THRESHOLD) {
+            "These UTXOs are worth too little to consolidate after the network fee"
+        }
+
+        val outputs = listOf(TxOutput(destinationAddress, outputValue))
+        val rawTx = buildRawTransaction(utxos, outputs)
+        val signedTx = signTransaction(rawTx, utxos, keyPair)
+        val txId = doubleSha256(signedTx).reversedArray().toHex()
+
+        return SignedTransaction(
+            txHex = signedTx.toHex(),
+            txId = txId,
+            size = signedTx.size
+        )
+    }
+
+    /**
      * Estimate the fee for a transaction in satoshis.
      */
     fun estimateFee(inputCount: Int, outputCount: Int, feeRate: Long = DEFAULT_FEE_RATE): Long {
@@ -114,6 +158,11 @@ object MeowcoinTransaction {
             total += utxo.value
             val estFee = estimateSize(selected.size, 2) * feeRate
             if (total >= targetAmount + estFee) break
+            check(selected.size < MAX_TX_INPUTS) {
+                "Too many small coins to send this amount in one transaction " +
+                    "(would need more than $MAX_TX_INPUTS inputs). Consolidate your " +
+                    "coins first, or send a smaller amount."
+            }
         }
 
         val finalFee = estimateSize(selected.size, 2) * feeRate

@@ -128,12 +128,14 @@ class ElectrumClient(
             val socket = if (useSSL) {
                 SSLSocketFactory.getDefault().createSocket().apply {
                     connect(InetSocketAddress(server.host, port), CONNECT_TIMEOUT_MS)
-                    soTimeout = READ_TIMEOUT_MS
+                    // Keep subscription reads open while the server is idle.
+                    // Individual JSON-RPC calls are bounded in request().
+                    soTimeout = 0
                 }
             } else {
                 java.net.Socket().apply {
                     connect(InetSocketAddress(server.host, port), CONNECT_TIMEOUT_MS)
-                    soTimeout = READ_TIMEOUT_MS
+                    soTimeout = 0
                 }
             }
 
@@ -220,11 +222,17 @@ class ElectrumClient(
         val json = gson.toJson(rpcRequest)
         Log.d(TAG, "→ $json")
 
-        writer?.println(json)
-            ?: throw Exception("Not connected")
+        withContext(Dispatchers.IO) {
+            writer?.println(json)
+                ?: throw Exception("Not connected")
+        }
 
-        return withTimeout(READ_TIMEOUT_MS.toLong()) {
-            deferred.await()
+        return try {
+            withTimeout(READ_TIMEOUT_MS.toLong()) {
+                deferred.await()
+            }
+        } finally {
+            pendingRequests.remove(id, deferred)
         }
     }
 

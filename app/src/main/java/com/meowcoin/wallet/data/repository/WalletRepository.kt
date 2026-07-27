@@ -8,6 +8,8 @@ import com.meowcoin.wallet.data.remote.ElectrumClient
 import com.meowcoin.wallet.data.remote.PriceService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Main wallet repository — light client powered by Electrum servers.
@@ -20,6 +22,16 @@ class WalletRepository(
     private val secureKeyStore: SecureKeyStore,
     val electrumClient: ElectrumClient = ElectrumClient()
 ) {
+    data class ConsolidationPreview(
+        val sourceAddress: String,
+        val destinationAddress: String,
+        val inputCount: Int,
+        val totalInput: Long,
+        val estimatedFee: Long,
+        val outputAmount: Long,
+        val remainingUtxoCount: Int
+    )
+
     companion object {
         private const val TAG = "WalletRepository"
         private const val HD_GAP_LIMIT = 20  // BIP44 gap limit
@@ -45,6 +57,7 @@ class WalletRepository(
     private val transactionDao = database.transactionDao()
     private val utxoDao = database.utxoDao()
     private val assetDao = database.assetDao()
+    private val historySyncMutex = Mutex()
 
     // Connection state exposed from Electrum client
     val connectionState = electrumClient.connectionState
@@ -380,6 +393,106 @@ class WalletRepository(
     fun getUnspentUtxos(address: String): Flow<List<UtxoEntity>> =
         utxoDao.getUnspentUtxos(address)
 
+    suspend fun getConsolidationPreview(): Result<ConsolidationPreview> =
+        withContext(Dispatchers.IO) {
+            try {
+                Result.success(selectConsolidationBatch().preview)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+
+    suspend fun consolidateUtxos(): Result<String> = withContext(Dispatchers.IO) {
+        try {
+            val batch = selectConsolidationBatch()
+            val privateKey = secureKeyStore.getPrivateKey(batch.preview.sourceAddress)
+                ?: throw IllegalStateException("Private key not found for consolidation address")
+            val keyPair = MeowcoinKeyPair.fromPrivateKey(privateKey)
+            val inputs = batch.utxos.map { utxo ->
+                MeowcoinTransaction.UTXO(
+                    txHash = utxo.txHash,
+                    outputIndex = utxo.outputIndex,
+                    value = utxo.value,
+                    scriptPubKey = utxo.scriptPubKey
+                )
+            }
+            val signedTx = MeowcoinTransaction.buildConsolidationTransaction(
+                keyPair = keyPair,
+                utxos = inputs,
+                destinationAddress = batch.preview.destinationAddress
+            )
+            val txId = electrumClient.broadcastTransaction(signedTx.txHex)
+
+            transactionDao.insertTransaction(
+                TransactionEntity(
+                    txId = txId,
+                    walletAddress = batch.preview.sourceAddress,
+                    amount = -batch.preview.estimatedFee,
+                    fee = batch.preview.estimatedFee,
+                    toAddress = batch.preview.destinationAddress,
+                    fromAddress = batch.preview.sourceAddress,
+                    status = "pending",
+                    timestamp = System.currentTimeMillis()
+                )
+            )
+            batch.utxos.forEach { utxoDao.markSpent(it.id) }
+            Result.success(txId)
+        } catch (e: Exception) {
+            Log.e(TAG, "Consolidation failed: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
+    private data class ConsolidationBatch(
+        val preview: ConsolidationPreview,
+        val utxos: List<UtxoEntity>
+    )
+
+    private suspend fun selectConsolidationBatch(): ConsolidationBatch {
+        val addresses = walletDao.getActiveAddresses()
+        val allUtxos = utxoDao.getUnspentUtxosForAddresses(addresses)
+            .filter { it.confirmations > 0 }
+        val destinationAddress = secureKeyStore.getPrimaryAddress()
+            ?: throw IllegalStateException("Wallet address not found")
+
+        val candidates = allUtxos
+            .groupBy { it.walletAddress }
+            .filterValues { it.size >= 2 }
+            .mapNotNull { (sourceAddress, addressUtxos) ->
+                val batch = addressUtxos
+                    .sortedBy { it.value }
+                    .take(MeowcoinTransaction.MAX_TX_INPUTS)
+                val totalInput = batch.sumOf { it.value }
+                val estimatedFee = MeowcoinTransaction.estimateFee(batch.size, 1)
+                val outputAmount = totalInput - estimatedFee
+                if (outputAmount <= MeowcoinTransaction.DUST_THRESHOLD) {
+                    null
+                } else {
+                    ConsolidationBatch(
+                        preview = ConsolidationPreview(
+                            sourceAddress = sourceAddress,
+                            destinationAddress = destinationAddress,
+                            inputCount = batch.size,
+                            totalInput = totalInput,
+                            estimatedFee = estimatedFee,
+                            outputAmount = outputAmount,
+                            remainingUtxoCount = allUtxos.size - batch.size + 1
+                        ),
+                        utxos = batch
+                    )
+                }
+            }
+
+        return candidates.maxByOrNull { it.preview.inputCount }
+            ?: throw IllegalStateException(
+                if (allUtxos.size < 2) {
+                    "Nothing to consolidate yet. At least two confirmed UTXOs are required."
+                } else {
+                    "No same-address UTXO batch is large enough to cover the network fee."
+                }
+            )
+    }
+
     // ═══════════════════════════════════════════
     //  Send Transaction
     // ═══════════════════════════════════════════
@@ -498,53 +611,65 @@ class WalletRepository(
      */
     suspend fun refreshWalletData(address: String): Result<Unit> = withContext(Dispatchers.IO) {
         try {
-            val scriptHash = electrumClient.addressToScriptHash(address)
-            Log.d(TAG, "Refreshing $address (scriptHash: $scriptHash)")
-
-            // ── Fetch UTXOs ──
-            val unspent = electrumClient.listUnspent(scriptHash)
-            val utxoEntities = unspent.map { utxo ->
-                val hash160 = MeowcoinAddress.toHash160(address)
-                val scriptPubKey = buildP2PKHScriptHex(hash160)
-
-                UtxoEntity(
-                    id = "${utxo.txHash}:${utxo.txPos}",
-                    txHash = utxo.txHash,
-                    outputIndex = utxo.txPos,
-                    walletAddress = address,
-                    value = utxo.value,
-                    scriptPubKey = scriptPubKey,
-                    confirmations = if (utxo.height > 0) 1 else 0,
-                    isSpent = false
-                )
-            }
-            utxoDao.deleteAllForWallet(address)
-            if (utxoEntities.isNotEmpty()) {
-                utxoDao.insertUtxos(utxoEntities)
-            }
-
-            // ── Fetch Transaction History ──
-            val myAddresses = (walletDao.getActiveAddresses() + address).toSet()
-            val prevTxCache = mutableMapOf<String, JsonObject>()
-            val history = electrumClient.getHistory(scriptHash)
-            for (item in history) {
-                val existing = transactionDao.getTransaction(item.txHash)
-                if (existing != null && existing.confirmations > 0) continue
-
-                try {
-                    val txJson = electrumClient.getTransaction(item.txHash, verbose = true)
-                    val txObj = txJson.asJsonObject
-                    val txEntity = parseTxFromElectrum(txObj, address, myAddresses, item.height, prevTxCache)
-                    transactionDao.insertTransaction(txEntity)
-                } catch (e: Exception) {
-                    Log.w(TAG, "Failed to fetch tx ${item.txHash}: ${e.message}")
-                }
-            }
-
-            Log.i(TAG, "Refresh complete: ${utxoEntities.size} UTXOs, ${history.size} txs")
+            val utxoCount = refreshUtxos(address)
+            val historyCount = refreshHistory(address)
+            Log.i(TAG, "Refresh complete: $utxoCount UTXOs, $historyCount txs")
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e(TAG, "Refresh failed: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Refresh spendable coins without waiting for transaction-history parsing.
+     *
+     * History parsing can require several Electrum lookups per transaction. Keeping
+     * it separate lets large wallets reach the usable home screen as soon as their
+     * UTXOs and balance are current.
+     */
+    suspend fun refreshWalletBalance(address: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val utxoCount = refreshUtxos(address)
+            Log.i(TAG, "Balance refresh complete: $utxoCount UTXOs")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Balance refresh failed: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun refreshWalletHistory(address: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val historyCount = refreshHistory(address)
+            Log.i(TAG, "History refresh complete: $historyCount txs")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "History refresh failed: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun refreshAllBalances(): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            for (address in walletDao.getActiveAddresses()) {
+                refreshWalletBalance(address).getOrThrow()
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Refresh all balances failed: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun refreshAllHistories(): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            for (address in walletDao.getActiveAddresses()) {
+                refreshWalletHistory(address).getOrThrow()
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Refresh all histories failed: ${e.message}", e)
             Result.failure(e)
         }
     }
@@ -556,7 +681,7 @@ class WalletRepository(
         try {
             val addresses = walletDao.getActiveAddresses()
             for (addr in addresses) {
-                refreshWalletData(addr)
+                refreshWalletData(addr).getOrThrow()
             }
             // Also fetch fiat price
             try { fetchFiatPrice() } catch (_: Exception) {}
@@ -565,6 +690,60 @@ class WalletRepository(
             Log.e(TAG, "Refresh all failed: ${e.message}", e)
             Result.failure(e)
         }
+    }
+
+    private suspend fun refreshUtxos(address: String): Int {
+        val scriptHash = electrumClient.addressToScriptHash(address)
+        Log.d(TAG, "Refreshing balance for $address (scriptHash: $scriptHash)")
+        val unspent = electrumClient.listUnspent(scriptHash)
+        val hash160 = MeowcoinAddress.toHash160(address)
+        val scriptPubKey = buildP2PKHScriptHex(hash160)
+        val utxoEntities = unspent.map { utxo ->
+            UtxoEntity(
+                id = "${utxo.txHash}:${utxo.txPos}",
+                txHash = utxo.txHash,
+                outputIndex = utxo.txPos,
+                walletAddress = address,
+                value = utxo.value,
+                scriptPubKey = scriptPubKey,
+                confirmations = if (utxo.height > 0) 1 else 0,
+                isSpent = false
+            )
+        }
+
+        utxoDao.deleteAllForWallet(address)
+        if (utxoEntities.isNotEmpty()) {
+            utxoDao.insertUtxos(utxoEntities)
+        }
+        return utxoEntities.size
+    }
+
+    private suspend fun refreshHistory(address: String): Int = historySyncMutex.withLock {
+        val scriptHash = electrumClient.addressToScriptHash(address)
+        val myAddresses = (walletDao.getActiveAddresses() + address).toSet()
+        val prevTxCache = mutableMapOf<String, JsonObject>()
+        val history = electrumClient.getHistory(scriptHash)
+
+        for (item in history) {
+            val existing = transactionDao.getTransaction(item.txHash)
+            if (existing != null && existing.confirmations > 0) continue
+
+            try {
+                val txJson = electrumClient.getTransaction(item.txHash, verbose = true)
+                val txObj = txJson.asJsonObject
+                val txEntity = parseTxFromElectrum(
+                    txObj,
+                    address,
+                    myAddresses,
+                    item.height,
+                    prevTxCache
+                )
+                transactionDao.insertTransaction(txEntity)
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to fetch tx ${item.txHash}: ${e.message}")
+            }
+        }
+        history.size
     }
 
     /**
@@ -580,7 +759,7 @@ class WalletRepository(
             }
             Log.d(TAG, "Subscribed to updates for $address")
         } catch (e: Exception) {
-            Log.w(TAG, "Subscribe failed: ${e.message}")
+            Log.w(TAG, "Subscribe failed: ${e.message}", e)
         }
     }
 
@@ -601,7 +780,7 @@ class WalletRepository(
             }
             Log.d(TAG, "Subscribed to blocks, current height: ${header.height}")
         } catch (e: Exception) {
-            Log.w(TAG, "Block subscribe failed: ${e.message}")
+            Log.w(TAG, "Block subscribe failed: ${e.message}", e)
         }
     }
 

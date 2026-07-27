@@ -32,6 +32,7 @@ fun MeowcoinNavHost(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val sendState by viewModel.sendState.collectAsStateWithLifecycle()
+    val consolidationState by viewModel.consolidationState.collectAsStateWithLifecycle()
     val mnemonicState by viewModel.mnemonicState.collectAsStateWithLifecycle()
     val connectionState by viewModel.connectionState.collectAsStateWithLifecycle()
     val serverInfo by viewModel.serverInfo.collectAsStateWithLifecycle()
@@ -150,6 +151,7 @@ fun MeowcoinNavHost(
                 serverHost = serverInfo?.host ?: "",
                 serverVersion = serverInfo?.serverVersion ?: "",
                 blockHeight = serverInfo?.blockHeight ?: 0,
+                consolidationState = consolidationState,
                 onExportPrivateKey = {
                     wif = viewModel.getWIF()
                 },
@@ -164,6 +166,15 @@ fun MeowcoinNavHost(
                 },
                 onRescanAddresses = {
                     viewModel.rescanAddresses()
+                },
+                onPrepareConsolidation = {
+                    viewModel.prepareConsolidation()
+                },
+                onConsolidate = {
+                    viewModel.consolidateUtxos()
+                },
+                onDismissConsolidation = {
+                    viewModel.clearConsolidationState()
                 },
                 onConnectCustomServer = { host, port, useSSL ->
                     viewModel.connectToCustomServer(host, port, useSSL)
