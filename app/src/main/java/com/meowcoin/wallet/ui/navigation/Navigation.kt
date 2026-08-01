@@ -1,6 +1,9 @@
 package com.meowcoin.wallet.ui.navigation
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -9,6 +12,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.meowcoin.wallet.BuildConfig
+import com.meowcoin.wallet.ashcats.buildAshCatsUrl
 import com.meowcoin.wallet.crypto.BiometricHelper
 import com.meowcoin.wallet.data.remote.ElectrumClient
 import com.meowcoin.wallet.ui.screens.*
@@ -93,6 +98,22 @@ fun MeowcoinNavHost(
                 },
                 onRefreshClick = {
                     viewModel.refreshData()
+                },
+                onAshCatsClick = {
+                    val ashCatsUri = Uri.parse(
+                        buildAshCatsUrl(BuildConfig.ASH_CATS_URL, uiState.address)
+                    )
+                    val customTab = CustomTabsIntent.Builder()
+                        .setColorScheme(CustomTabsIntent.COLOR_SCHEME_DARK)
+                        .setShowTitle(true)
+                        .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
+                        .build()
+
+                    try {
+                        customTab.launchUrl(context, ashCatsUri)
+                    } catch (_: ActivityNotFoundException) {
+                        context.startActivity(Intent(Intent.ACTION_VIEW, ashCatsUri))
+                    }
                 },
                 onSettingsClick = {
                     navController.navigate(Routes.SETTINGS)

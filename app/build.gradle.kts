@@ -5,6 +5,11 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val ashCatsUrl = providers.gradleProperty("ashCatsUrl")
+    .orElse("https://www.mewccrypto.com/ash-cats/")
+    .get()
+val escapedAshCatsUrl = ashCatsUrl.replace("\\", "\\\\").replace("\"", "\\\"")
+
 android {
     namespace = "com.meowcoin.wallet"
     compileSdk = 35
@@ -22,8 +27,9 @@ android {
         applicationId = "com.meowcoin.wallet"
         minSdk = 26
         targetSdk = 35
-        versionCode = 8
-        versionName = "1.0.7"
+        versionCode = 9
+        versionName = "1.0.8"
+        buildConfigField("String", "ASH_CATS_URL", "\"$escapedAshCatsUrl\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -53,6 +59,7 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 
@@ -85,6 +92,7 @@ dependencies {
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation("androidx.browser:browser:1.8.0")
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")

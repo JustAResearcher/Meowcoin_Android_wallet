@@ -1,5 +1,6 @@
 <en-US>
-Fix: transaction history was rendering every entry as "Sent -0.0000 MEWC" pointing at your own address. The parser couldn't read the address/value fields from the current Meowcoin node response format. Sent vs received, amounts, and counterparty addresses now display correctly.
-
-Note: on first launch after upgrading, cached history is cleared and re-synced from the network. Your seed and addresses are preserved.
+Create an Ash Cat directly from the wallet Home screen. The Forge opens in a
+secure browser tab with only your public receiving address prefilled. Private
+keys and seed words never leave the wallet. The current Forge is a simulator
+and does not sign or broadcast a MEWC burn.
 </en-US>

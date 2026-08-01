@@ -15,6 +15,7 @@ This wallet connects directly to Electrum servers using the **Stratum protocol**
 - **Custom Server Support** — Point the wallet at your own Electrum node
 - **Import / Export** — Import existing wallets via WIF private key
 - **Transaction History** — View all incoming and outgoing transactions
+- **Ash Cats Forge** — Open the mobile Forge with your public address prefilled
 - **Material Design 3** — Clean, modern UI built with Jetpack Compose
 
 ---
@@ -57,6 +58,10 @@ This wallet connects directly to Electrum servers using the **Stratum protocol**
    ./gradlew assembleRelease
    ```
    The APK will be at `app/build/outputs/apk/release/`.
+
+The Ash Cats target defaults to `https://www.mewccrypto.com/ash-cats/`. To use
+another HTTPS deployment for a build, pass
+`-PashCatsUrl=https://example.com/ash-cats/` to Gradle.
 
 > **Tip:** If you see "SDK location not found", create a `local.properties` file in the project root with:
 > ```

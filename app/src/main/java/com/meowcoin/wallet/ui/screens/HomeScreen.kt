@@ -33,6 +33,7 @@ fun HomeScreen(
     onSendClick: () -> Unit,
     onReceiveClick: () -> Unit,
     onRefreshClick: () -> Unit,
+    onAshCatsClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onTransactionClick: (String) -> Unit
 ) {
@@ -100,6 +101,10 @@ fun HomeScreen(
                         onRefreshClick = onRefreshClick
                     )
                     Spacer(modifier = Modifier.height(4.dp))
+                }
+
+                item {
+                    AshCatsCard(onClick = onAshCatsClick)
                 }
 
                 // Address display

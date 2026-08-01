@@ -1,5 +1,18 @@
 # Meowcoin Wallet — Release Notes
 
+## v1.0.8 — Ash Cats launch
+
+- **Create an Ash Cat from Home.** A new card opens the Ash Cats Forge in a
+  secure browser Custom Tab with the wallet's public receiving address
+  prefilled.
+- **Private keys stay in the wallet.** The link contains only the public
+  address and never exposes signing material, seed words, or private keys.
+- **Simulator safety remains explicit.** Ash Cats v0.1.0 prepares and reveals
+  deterministic demo collectibles but does not sign or broadcast a MEWC burn.
+- **Deployments are configurable.** Release builders can replace the default
+  `https://www.mewccrypto.com/ash-cats/` target with
+  `-PashCatsUrl=https://example.com/path/`.
+
 ## v1.0.7 — Large-wallet loading and UTXO consolidation
 
 - **Large wallets no longer stay behind “Fetching your coins…” while transaction
