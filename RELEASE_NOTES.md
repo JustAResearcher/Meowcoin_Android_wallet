@@ -1,5 +1,47 @@
 # Meowcoin Wallet — Release Notes
 
+## v1.1.0 — Multi-coin send/receive and native SegWit
+
+- **Five enabled networks.** One BIP39 recovery phrase now provides self-custodial
+  send/receive accounts for Meowcoin, Bitcoin, Litecoin, Dogecoin, and Pepecoin.
+  DigiByte, Viacoin, and Junkcoin remain disabled until their independent TLS
+  backend gates are satisfied.
+- **Native SegWit for MEWC and LTC.** New receive and change addresses use
+  `m/84'/coin_type'/0'/change/index` and display as `mewc1q…` or `ltc1q…`.
+  Existing BIP44 P2PKH balances remain discoverable and spendable.
+- **Witness-aware spending.** BIP143 signing, mixed P2PKH/P2WPKH inputs,
+  stripped txids, witness txids, virtual-size fees, and native-SegWit
+  consolidation are supported.
+- **Cross-chain ambiguity protection.** Bare Base58 addresses that map to
+  different locking scripts—especially the MEWC P2PKH/LTC P2SH version-50
+  collision—are blocked. A matching `meowcoin:` or `litecoin:` URI is required,
+  and confirmation repeats the network and interpreted address type.
+- **Recovery and storage hardening.** Coin-scoped Room storage, lossless schema
+  migration, separate BIP44/BIP84 indexes, receive/change discovery, reconnect
+  retry, exact amount parsing, raw-prevout verification, and serialized sends
+  protect multi-address wallets.
+- **Safer connectivity and QR flow.** Automatic Electrum connections are
+  TLS-only with endpoint fallback, hostname verification, and genesis checks.
+  Payment QR scanning and coin-specific receive/share URIs are wired end to end.
+
+### Important boundaries
+
+- Litecoin support is transparent-only; MWEB transaction serialization is not
+  supported.
+- This remains a server-trusting light client rather than a fully validating SPV
+  node. A server can hide data or prevent broadcast, but cannot obtain the keys.
+- Back up the recovery phrase before upgrading and test each network with a
+  small amount before moving significant funds.
+
+### Validation
+
+- 66 JVM unit tests passed, including independent BIP84 vectors and the official
+  BIP143 signing vector.
+- 9 Android instrumentation tests passed on API 36.1, covering Room migrations
+  and encrypted coin-scoped storage.
+- Android lint completed with 0 errors.
+- Debug and signed release APKs assembled successfully.
+
 ## v1.0.8 — Ash Cats launch
 
 - **Create an Ash Cat from Home.** A new card opens the Ash Cats Forge in a

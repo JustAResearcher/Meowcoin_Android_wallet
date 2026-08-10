@@ -18,12 +18,13 @@ import java.security.SecureRandom
 import java.security.Security
 
 /**
- * Manages ECDSA key pair on secp256k1 for Meowcoin.
- * Meowcoin (like Ravencoin and Bitcoin) uses secp256k1 elliptic curve.
+ * Manages an ECDSA key pair on secp256k1 for a Bitcoin-family [profile].
  */
 class MeowcoinKeyPair private constructor(
     val privateKey: BigInteger,
-    val publicKey: ECPoint
+    val publicKey: ECPoint,
+    val profile: CoinProfile,
+    val isCompressed: Boolean
 ) {
     companion object {
         private val CURVE_PARAMS: ECNamedCurveParameterSpec =
@@ -38,7 +39,7 @@ class MeowcoinKeyPair private constructor(
         /**
          * Generate a new random key pair.
          */
-        fun generate(): MeowcoinKeyPair {
+        fun generate(profile: CoinProfile = CoinRegistry.MEWC): MeowcoinKeyPair {
             val secureRandom = SecureRandom()
             val privKeyBytes = ByteArray(32)
             var privKey: BigInteger
@@ -49,38 +50,45 @@ class MeowcoinKeyPair private constructor(
             } while (privKey == BigInteger.ZERO || privKey >= CURVE_PARAMS.n)
 
             val pubKey = CURVE_PARAMS.g.multiply(privKey).normalize()
-            return MeowcoinKeyPair(privKey, pubKey)
+            return MeowcoinKeyPair(privKey, pubKey, profile, true)
         }
 
         /**
          * Restore a key pair from a private key hex string.
          */
-        fun fromPrivateKey(privateKeyHex: String): MeowcoinKeyPair {
+        fun fromPrivateKey(
+            privateKeyHex: String,
+            profile: CoinProfile = CoinRegistry.MEWC,
+            compressed: Boolean = true
+        ): MeowcoinKeyPair {
             val privKey = BigInteger(privateKeyHex, 16)
             require(privKey > BigInteger.ZERO && privKey < CURVE_PARAMS.n) {
                 "Private key out of range"
             }
             val pubKey = CURVE_PARAMS.g.multiply(privKey).normalize()
-            return MeowcoinKeyPair(privKey, pubKey)
+            return MeowcoinKeyPair(privKey, pubKey, profile, compressed)
         }
 
         /**
-         * Import from Wallet Import Format (WIF) private key.
-         * Meowcoin WIF uses version byte 0x80 (same as Bitcoin mainnet).
+         * Import a Wallet Import Format (WIF) private key for [profile].
          */
-        fun fromWIF(wif: String): MeowcoinKeyPair {
+        fun fromWIF(
+            wif: String,
+            profile: CoinProfile = CoinRegistry.MEWC
+        ): MeowcoinKeyPair {
             val (version, payload) = Base58.decodeChecked(wif)
-            require(version == 0x70) { "Invalid WIF version: $version (expected 0x70)" }
-
-            val keyBytes = if (payload.size == 33 && payload[32].toInt() == 1) {
-                // Compressed key indicator
-                payload.copyOfRange(0, 32)
-            } else {
-                require(payload.size == 32) { "Invalid WIF payload length: ${payload.size}" }
-                payload
+            require(version in profile.acceptedWifVersions) {
+                "Invalid ${profile.ticker} WIF version: $version"
             }
 
-            return fromPrivateKey(keyBytes.toHex())
+            val compressed = when {
+                payload.size == 33 && payload[32].toInt() == 1 -> true
+                payload.size == 32 -> false
+                else -> throw IllegalArgumentException("Invalid WIF payload")
+            }
+            val keyBytes = payload.copyOfRange(0, 32)
+
+            return fromPrivateKey(keyBytes.toHex(), profile, compressed)
         }
     }
 
@@ -88,14 +96,7 @@ class MeowcoinKeyPair private constructor(
      * Get the private key as hex string.
      */
     fun privateKeyHex(): String {
-        return privateKey.toByteArray().let { bytes ->
-            // Remove potential leading zero byte from BigInteger encoding
-            if (bytes.size == 33 && bytes[0].toInt() == 0) {
-                bytes.copyOfRange(1, 33)
-            } else {
-                bytes
-            }.toHex()
-        }
+        return privateKey.toByteArrayUnsigned(32).toHex()
     }
 
     /**
@@ -112,23 +113,31 @@ class MeowcoinKeyPair private constructor(
         return publicKey.getEncoded(false)
     }
 
+    fun encodedPublicKey(): ByteArray = publicKey.getEncoded(isCompressed)
+
     /**
-     * Export private key in Wallet Import Format (WIF) with compressed flag.
+     * Export the private key in [profile]'s Wallet Import Format with compressed flag.
      */
-    fun toWIF(): String {
+    fun toWIF(profile: CoinProfile = this.profile): String {
         val privKeyBytes = privateKey.toByteArrayUnsigned(32)
-        val payload = ByteArray(33)
-        System.arraycopy(privKeyBytes, 0, payload, 0, 32)
-        payload[32] = 0x01 // compressed flag
-        return Base58.encodeChecked(0x70, payload) // Meowcoin WIF version = 112 (0x70)
+        val payload = if (isCompressed) privKeyBytes + byteArrayOf(0x01) else privKeyBytes
+        return Base58.encodeChecked(profile.wifVersion, payload)
     }
 
     /**
-     * Derive the Meowcoin address from this key pair.
-     * Meowcoin uses version byte 50 (0x32) for P2PKH addresses → starts with 'M'.
+     * Derive this key's legacy P2PKH receive address for [profile].
      */
-    fun toAddress(): String {
-        return MeowcoinAddress.fromPublicKey(compressedPublicKey())
+    fun toAddress(profile: CoinProfile = this.profile): String {
+        return MeowcoinAddress.fromPublicKey(encodedPublicKey(), profile)
+    }
+
+    /**
+     * Derive this compressed key's native P2WPKH receive address.
+     * Native SegWit does not support uncompressed public keys.
+     */
+    fun toP2WPKHAddress(profile: CoinProfile = this.profile): String {
+        require(isCompressed) { "Native SegWit requires a compressed public key" }
+        return MeowcoinAddress.fromPublicKeyP2WPKH(compressedPublicKey(), profile)
     }
 
     /**
@@ -201,7 +210,7 @@ class MeowcoinKeyPair private constructor(
 }
 
 /**
- * Meowcoin address utilities.
+ * Bitcoin-family address utilities. All public methods default to Meowcoin for compatibility.
  *
  * Supported address types after the APEX upgrade (Meow_v30.2.0):
  *   - Base58Check P2PKH:  version 50  → 'M...'
@@ -222,27 +231,69 @@ object MeowcoinAddress {
     data class Parsed(val type: Type, val payload: ByteArray, val witnessVersion: Int = -1)
 
     /**
-     * Derive a P2PKH address from a compressed public key.
-     * (Receive addresses stay P2PKH for now; SegWit/Taproot are supported as send targets only.)
+     * Derive a P2PKH address from a compressed or uncompressed public key.
      */
-    fun fromPublicKey(compressedPubKey: ByteArray): String {
-        val sha256 = MessageDigest.getInstance("SHA-256").digest(compressedPubKey)
+    fun fromPublicKey(
+        publicKeyBytes: ByteArray,
+        profile: CoinProfile = CoinRegistry.MEWC
+    ): String {
+        require(publicKeyBytes.size == 33 || publicKeyBytes.size == 65) {
+            "Public key must be compressed (33 bytes) or uncompressed (65 bytes)"
+        }
+        val sha256 = MessageDigest.getInstance("SHA-256").digest(publicKeyBytes)
         val ripemd160 = ripemd160(sha256)
-        return Base58.encodeChecked(PUBKEY_ADDRESS_VERSION, ripemd160)
+        return Base58.encodeChecked(profile.pubKeyAddressVersion, ripemd160)
+    }
+
+    /** Derive a native v0 P2WPKH address from a compressed public key. */
+    fun fromPublicKeyP2WPKH(
+        compressedPublicKey: ByteArray,
+        profile: CoinProfile = CoinRegistry.MEWC
+    ): String {
+        require(compressedPublicKey.size == 33) {
+            "Native SegWit requires a compressed public key"
+        }
+        val hrp = requireNotNull(profile.bech32Hrp) {
+            "${profile.ticker} does not define a Bech32 HRP"
+        }
+        return Bech32.encodeSegwitAddress(hrp, 0, hash160(compressedPublicKey))
     }
 
     /**
      * Parse a Meowcoin address (base58 or bech32) on the given network HRP.
      * Returns null if the string is not a valid Meowcoin address.
      */
-    fun parse(address: String, hrp: String = MeowcoinNetwork.BECH32_HRP): Parsed? {
+    fun parse(
+        address: String,
+        profile: CoinProfile = CoinRegistry.MEWC
+    ): Parsed? = parseForNetwork(
+        address = address,
+        pubKeyVersion = profile.pubKeyAddressVersion,
+        scriptVersions = profile.scriptAddressVersions,
+        hrp = profile.bech32Hrp
+    )
+
+    /** Compatibility overload for callers that previously supplied only a Meowcoin HRP. */
+    fun parse(address: String, hrp: String): Parsed? = parseForNetwork(
+        address = address,
+        pubKeyVersion = PUBKEY_ADDRESS_VERSION,
+        scriptVersions = setOf(SCRIPT_ADDRESS_VERSION),
+        hrp = hrp
+    )
+
+    private fun parseForNetwork(
+        address: String,
+        pubKeyVersion: Int,
+        scriptVersions: Set<Int>,
+        hrp: String?
+    ): Parsed? {
         // Try base58check first.
         try {
             val (version, payload) = Base58.decodeChecked(address)
             if (payload.size == 20) {
-                when (version) {
-                    PUBKEY_ADDRESS_VERSION -> return Parsed(Type.P2PKH, payload)
-                    SCRIPT_ADDRESS_VERSION -> return Parsed(Type.P2SH, payload)
+                when {
+                    version == pubKeyVersion -> return Parsed(Type.P2PKH, payload)
+                    version in scriptVersions -> return Parsed(Type.P2SH, payload)
                 }
             }
         } catch (_: Exception) {
@@ -250,6 +301,7 @@ object MeowcoinAddress {
         }
 
         // Try bech32 / bech32m.
+        if (hrp == null) return null
         val witness = Bech32.decodeSegwitAddress(hrp, address) ?: return null
         return when {
             witness.witnessVersion == 0 && witness.program.size == 20 ->
@@ -265,12 +317,25 @@ object MeowcoinAddress {
     /**
      * Validate a Meowcoin address (any supported type).
      */
-    fun isValid(address: String): Boolean = parse(address) != null
+    fun isValid(
+        address: String,
+        profile: CoinProfile = CoinRegistry.MEWC
+    ): Boolean = parse(address, profile) != null
 
     /**
      * Build the scriptPubKey that locks an output to the given address.
      */
-    fun toScriptPubKey(address: String, hrp: String = MeowcoinNetwork.BECH32_HRP): ByteArray {
+    fun toScriptPubKey(
+        address: String,
+        profile: CoinProfile = CoinRegistry.MEWC
+    ): ByteArray {
+        val parsed = parse(address, profile)
+            ?: throw IllegalArgumentException("Invalid ${profile.ticker} address: $address")
+        return scriptPubKeyFor(parsed)
+    }
+
+    /** Compatibility overload for callers that previously supplied only a Meowcoin HRP. */
+    fun toScriptPubKey(address: String, hrp: String): ByteArray {
         val parsed = parse(address, hrp)
             ?: throw IllegalArgumentException("Invalid Meowcoin address: $address")
         return scriptPubKeyFor(parsed)
@@ -299,9 +364,16 @@ object MeowcoinAddress {
      * Throws for bech32 addresses — callers expecting a 20-byte hash160 must check the
      * address type with [parse] first.
      */
-    fun toHash160(address: String): ByteArray {
-        val (_, payload) = Base58.decodeChecked(address)
-        return payload
+    fun toHash160(
+        address: String,
+        profile: CoinProfile = CoinRegistry.MEWC
+    ): ByteArray {
+        val parsed = parse(address, profile)
+            ?: throw IllegalArgumentException("Invalid ${profile.ticker} address: $address")
+        require(parsed.type == Type.P2PKH || parsed.type == Type.P2SH) {
+            "Address does not contain a Base58 hash160 payload"
+        }
+        return parsed.payload
     }
 
     private fun ripemd160(input: ByteArray): ByteArray {
@@ -311,6 +383,9 @@ object MeowcoinAddress {
         digest.doFinal(output, 0)
         return output
     }
+
+    private fun hash160(input: ByteArray): ByteArray =
+        ripemd160(MessageDigest.getInstance("SHA-256").digest(input))
 }
 
 // Extension functions

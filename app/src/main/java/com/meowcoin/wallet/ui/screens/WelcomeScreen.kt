@@ -69,7 +69,7 @@ fun WelcomeScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Meowcoin Wallet",
+            text = "Multi-Coin Wallet",
             style = MaterialTheme.typography.displayLarge,
             fontWeight = FontWeight.Bold,
             color = MeowOrange
@@ -86,7 +86,7 @@ fun WelcomeScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "A secure, lightweight wallet for MEWC.\nPowered by Electrum servers.",
+            text = "One recovery phrase for supported Bitcoin-family coins.\nPowered by coin-specific Electrum servers.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -168,7 +168,7 @@ fun WelcomeScreen(
                 Icon(Icons.Default.FileDownload, contentDescription = null, modifier = Modifier.size(16.dp))
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    "Import WIF Private Key",
+                    "Import MEWC WIF Private Key",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -246,11 +246,11 @@ fun WelcomeScreen(
     if (showImportDialog) {
         AlertDialog(
             onDismissRequest = { showImportDialog = false },
-            title = { Text("Import WIF Key") },
+            title = { Text("Import Meowcoin WIF Key") },
             text = {
                 Column {
                     Text(
-                        "Enter your WIF (Wallet Import Format) private key:",
+                        "Enter a Meowcoin WIF (Wallet Import Format) private key:",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

@@ -2,6 +2,8 @@ package com.meowcoin.wallet.crypto
 
 import java.security.MessageDigest
 import java.security.SecureRandom
+import java.text.Normalizer
+import java.util.Locale
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
@@ -12,6 +14,45 @@ import javax.crypto.spec.PBEKeySpec
  * standard BIP39 English word list and derives 512-bit seeds via PBKDF2.
  */
 object Bip39 {
+    const val LEGACY_DERIVATION_VERSION = 1
+    const val CANONICAL_DERIVATION_VERSION = 2
+
+    /**
+     * Return the canonical mnemonic representation used for validation,
+     * derivation, and persistence.
+     *
+     * BIP39 strings use Unicode NFKD. For the English word list, mnemonic
+     * input is also case-insensitive and every Unicode whitespace run is
+     * represented by one ASCII space.
+     */
+    fun canonicalizeMnemonic(mnemonic: String): String {
+        val normalized = Normalizer.normalize(
+            mnemonic.lowercase(Locale.ROOT),
+            Normalizer.Form.NFKD
+        )
+        val canonical = StringBuilder(normalized.length)
+        var pendingSpace = false
+        var offset = 0
+
+        while (offset < normalized.length) {
+            val codePoint = normalized.codePointAt(offset)
+            if (isUnicodeWhitespace(codePoint)) {
+                pendingSpace = canonical.isNotEmpty()
+            } else {
+                if (pendingSpace) canonical.append(' ')
+                canonical.appendCodePoint(codePoint)
+                pendingSpace = false
+            }
+            offset += Character.charCount(codePoint)
+        }
+
+        return canonical.toString()
+    }
+
+    private fun isUnicodeWhitespace(codePoint: Int): Boolean =
+        codePoint == 0x0085 ||
+            Character.isWhitespace(codePoint) ||
+            Character.isSpaceChar(codePoint)
 
     /**
      * Generate a new mnemonic seed phrase.
@@ -67,7 +108,7 @@ object Bip39 {
      * Checks word count, word validity, and checksum.
      */
     fun validateMnemonic(mnemonic: String): Boolean {
-        val words = mnemonic.trim().lowercase().split("\\s+".toRegex())
+        val words = canonicalizeMnemonic(mnemonic).split(' ')
         if (words.size != 12 && words.size != 24) return false
 
         val wordList = Bip39WordList.ENGLISH
@@ -113,11 +154,31 @@ object Bip39 {
      * @return 64-byte seed
      */
     fun mnemonicToSeed(mnemonic: String, passphrase: String = ""): ByteArray {
-        val normalizedMnemonic = mnemonic.trim().lowercase()
+        val normalizedMnemonic = canonicalizeMnemonic(mnemonic)
+        val normalizedPassphrase = Normalizer.normalize(passphrase, Normalizer.Form.NFKD)
+        return deriveSeed(normalizedMnemonic, normalizedPassphrase)
+    }
+
+    /** Preserve the pre-v2 Android wallet derivation for already-stored seed strings. */
+    fun mnemonicToSeedLegacy(mnemonic: String, passphrase: String = ""): ByteArray {
+        return deriveSeed(mnemonic.trim().lowercase(Locale.ROOT), passphrase)
+    }
+
+    fun mnemonicToSeedForVersion(
+        mnemonic: String,
+        passphrase: String = "",
+        derivationVersion: Int
+    ): ByteArray = when (derivationVersion) {
+        LEGACY_DERIVATION_VERSION -> mnemonicToSeedLegacy(mnemonic, passphrase)
+        CANONICAL_DERIVATION_VERSION -> mnemonicToSeed(mnemonic, passphrase)
+        else -> throw IllegalArgumentException("Unsupported seed derivation version: $derivationVersion")
+    }
+
+    private fun deriveSeed(mnemonic: String, passphrase: String): ByteArray {
         val salt = "mnemonic$passphrase"
 
         val spec = PBEKeySpec(
-            normalizedMnemonic.toCharArray(),
+            mnemonic.toCharArray(),
             salt.toByteArray(Charsets.UTF_8),
             2048,
             512

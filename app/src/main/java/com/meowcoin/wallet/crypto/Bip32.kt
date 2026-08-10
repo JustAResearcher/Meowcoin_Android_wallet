@@ -17,6 +17,9 @@ import java.security.MessageDigest
  */
 object Bip32 {
 
+    const val BIP44_PURPOSE = 44
+    const val BIP84_PURPOSE = 84
+
     private val CURVE_PARAMS = ECNamedCurveTable.getParameterSpec("secp256k1")
     private val CURVE_ORDER = CURVE_PARAMS.n
 
@@ -34,9 +37,9 @@ object Bip32 {
         /**
          * Convert to a MeowcoinKeyPair (only if this is a private key).
          */
-        fun toKeyPair(): MeowcoinKeyPair {
+        fun toKeyPair(profile: CoinProfile = CoinRegistry.MEWC): MeowcoinKeyPair {
             require(isPrivate) { "Cannot create key pair from public extended key" }
-            return MeowcoinKeyPair.fromPrivateKey(key.toHex())
+            return MeowcoinKeyPair.fromPrivateKey(key.toHex(), profile)
         }
 
         /**
@@ -202,9 +205,88 @@ object Bip32 {
         account: Int = 0,
         change: Int = 0,
         addressIndex: Int = 0
+    ): ExtendedKey = deriveCoinKey(
+        master = master,
+        profile = CoinRegistry.MEWC,
+        account = account,
+        change = change,
+        addressIndex = addressIndex
+    )
+
+    /** Derive a profile-isolated BIP44 key: m/44'/coin_type'/account'/change/index. */
+    fun deriveCoinKey(
+        master: ExtendedKey,
+        profile: CoinProfile,
+        account: Int = 0,
+        change: Int = 0,
+        addressIndex: Int = 0
+    ): ExtendedKey = deriveCoinKey(
+        master,
+        profile,
+        account,
+        change,
+        addressIndex,
+        BIP44_PURPOSE
+    )
+
+    fun deriveCoinKey(
+        master: ExtendedKey,
+        profile: CoinProfile,
+        account: Int,
+        change: Int,
+        addressIndex: Int,
+        purpose: Int
     ): ExtendedKey {
-        val path = "m/44'/1669'/$account'/$change/$addressIndex"
-        return derivePath(master, path)
+        return derivePath(
+            master,
+            derivationPath(profile, purpose, account, change, addressIndex)
+        )
+    }
+
+    /** Derive a native-SegWit BIP84 key: m/84'/coin_type'/account'/change/index. */
+    fun deriveNativeSegwitKey(
+        master: ExtendedKey,
+        profile: CoinProfile,
+        account: Int = 0,
+        change: Int = 0,
+        addressIndex: Int = 0
+    ): ExtendedKey = deriveCoinKey(
+        master = master,
+        profile = profile,
+        account = account,
+        change = change,
+        addressIndex = addressIndex,
+        purpose = BIP84_PURPOSE
+    )
+
+    fun bip44Path(
+        profile: CoinProfile,
+        account: Int = 0,
+        change: Int = 0,
+        addressIndex: Int = 0
+    ): String = derivationPath(profile, BIP44_PURPOSE, account, change, addressIndex)
+
+    fun bip84Path(
+        profile: CoinProfile,
+        account: Int = 0,
+        change: Int = 0,
+        addressIndex: Int = 0
+    ): String = derivationPath(profile, BIP84_PURPOSE, account, change, addressIndex)
+
+    fun derivationPath(
+        profile: CoinProfile,
+        purpose: Int,
+        account: Int = 0,
+        change: Int = 0,
+        addressIndex: Int = 0
+    ): String {
+        require(purpose == BIP44_PURPOSE || purpose == BIP84_PURPOSE) {
+            "Only BIP44 and BIP84 derivation are supported"
+        }
+        require(account >= 0) { "Account index must be non-negative" }
+        require(change == 0 || change == 1) { "Change must be 0 or 1" }
+        require(addressIndex >= 0) { "Address index must be non-negative" }
+        return "m/$purpose'/${profile.bip44CoinType}'/$account'/$change/$addressIndex"
     }
 
     // ── Utility functions ──

@@ -1,6 +1,7 @@
 <en-US>
-Create an Ash Cat directly from the wallet Home screen. The Forge opens in a
-secure browser tab with only your public receiving address prefilled. Private
-keys and seed words never leave the wallet. The current Forge is a simulator
-and does not sign or broadcast a MEWC burn.
+Adds self-custodial send/receive for Meowcoin, Bitcoin, Litecoin, Dogecoin, and
+Pepecoin. MEWC/LTC now use recoverable BIP84 native-SegWit receive/change
+addresses with BIP143 signing. Also adds QR scanning, TLS Electrum fallback,
+exact fee previews, and protection against ambiguous cross-chain Base58
+addresses. Back up your phrase and test with a small amount first.
 </en-US>

@@ -2,6 +2,7 @@ package com.meowcoin.wallet.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
@@ -24,21 +25,27 @@ import com.meowcoin.wallet.ui.theme.MeowOrange
 fun ReceiveScreen(
     address: String,
     onBack: () -> Unit,
-    onShare: (String) -> Unit
+    onShare: (String) -> Unit,
+    coinName: String = "Meowcoin",
+    ticker: String = "MEWC",
+    paymentUri: String = address,
+    rawAddressRequiresNetworkTag: Boolean = false
 ) {
     val clipboardManager = LocalClipboardManager.current
+    val primaryCopyContent = if (rawAddressRequiresNetworkTag) paymentUri else address
+    var showRawAddressWarning by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Receive MEWC", fontWeight = FontWeight.Bold) },
+                title = { Text("Receive $ticker", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onShare(address) }) {
+                    IconButton(onClick = { onShare(paymentUri) }) {
                         Icon(Icons.Default.Share, "Share Address")
                     }
                 },
@@ -56,16 +63,32 @@ fun ReceiveScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.meowcoin_logo),
-                contentDescription = "Meowcoin",
-                modifier = Modifier.size(80.dp)
-            )
+            if (ticker == "MEWC") {
+                Image(
+                    painter = painterResource(id = R.drawable.meowcoin_logo),
+                    contentDescription = coinName,
+                    modifier = Modifier.size(80.dp)
+                )
+            } else {
+                Surface(
+                    modifier = Modifier.size(80.dp),
+                    shape = CircleShape,
+                    color = MeowOrange
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(
+                            text = ticker,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Your Meowcoin Address",
+                text = "Your $coinName Address",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -74,7 +97,7 @@ fun ReceiveScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Share this address or scan the QR code to receive MEWC",
+                text = "Share this address or scan the QR code to receive $ticker",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -85,7 +108,9 @@ fun ReceiveScreen(
             // QR Code and address
             AddressDisplay(
                 address = address,
-                showQR = true
+                showQR = true,
+                qrContent = paymentUri,
+                copyContent = primaryCopyContent
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -93,7 +118,7 @@ fun ReceiveScreen(
             // Copy button
             Button(
                 onClick = {
-                    clipboardManager.setText(AnnotatedString(address))
+                    clipboardManager.setText(AnnotatedString(primaryCopyContent))
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -102,11 +127,49 @@ fun ReceiveScreen(
                 shape = MaterialTheme.shapes.medium
             ) {
                 Text(
-                    "Copy Address",
+                    if (rawAddressRequiresNetworkTag) {
+                        "Copy Network-Tagged Request"
+                    } else {
+                        "Copy Address"
+                    },
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
             }
+
+            if (rawAddressRequiresNetworkTag) {
+                TextButton(onClick = { showRawAddressWarning = true }) {
+                    Text("Copy raw address")
+                }
+            }
         }
+    }
+
+    if (showRawAddressWarning) {
+        AlertDialog(
+            onDismissRequest = { showRawAddressWarning = false },
+            title = { Text("Ambiguous raw address") },
+            text = {
+                Text(
+                    "This address can be interpreted differently by another coin. " +
+                        "Only copy it raw when the sender has independently selected $coinName ($ticker)."
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        clipboardManager.setText(AnnotatedString(address))
+                        showRawAddressWarning = false
+                    }
+                ) {
+                    Text("Copy $ticker address")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRawAddressWarning = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }

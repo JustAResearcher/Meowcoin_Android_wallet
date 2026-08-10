@@ -6,36 +6,85 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import com.meowcoin.wallet.crypto.MeowcoinNetwork
+import com.meowcoin.wallet.crypto.CoinProfile
+import com.meowcoin.wallet.crypto.CoinRegistry
+import com.meowcoin.wallet.crypto.ElectrumEndpoint
+import com.meowcoin.wallet.crypto.MeowcoinAddress
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.InetSocketAddress
+import java.net.Socket
+import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
+import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
 
 /**
- * Electrum Stratum protocol client for Meowcoin.
+ * Electrum Stratum protocol client for a Bitcoin-family [CoinProfile].
  *
  * Implements a JSON-RPC client over TCP/SSL that speaks the Electrum protocol,
- * allowing the wallet to operate as a light client (SPV) without downloading
- * the full blockchain.
+ * allowing the wallet to query a configured light-wallet backend without downloading
+ * the full blockchain. The genesis pin prevents accidental cross-chain connections, but this
+ * client still trusts the server because it does not validate a complete header chain.
  *
  * Protocol reference: https://electrumx.readthedocs.io/en/latest/protocol.html
  */
 class ElectrumClient(
+    private val profile: CoinProfile = CoinRegistry.MEWC,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 ) {
     companion object {
         private const val TAG = "ElectrumClient"
         private const val PROTOCOL_VERSION = "1.4"
-        private const val CLIENT_NAME = "MeowcoinWallet"
+        private const val CLIENT_NAME = "MultiCoinAndroidWallet"
         private const val CONNECT_TIMEOUT_MS = 15_000
         private const val READ_TIMEOUT_MS = 30_000
+        private const val MEWC_GENESIS_HEADER_HEX =
+            "0400000000000000000000000000000000000000000000000000000000000000" +
+                "0000000090739a9ddd9c782daf939db397a9d21f74a960fea5c398d533842c59f66c91e8" +
+                "1b000c63ffff001e565d0500"
+
+        /**
+         * Calculate the conventional display-order double-SHA hash for an 80-byte genesis header.
+         * Live subscription headers remain opaque because AuxPoW chains can return extended data.
+         */
+        internal fun genesisHashFromHeader(headerHex: String): String {
+            require(headerHex.length == 160) { "Block header must be exactly 80 bytes" }
+            require(headerHex.all { it in '0'..'9' || it.lowercaseChar() in 'a'..'f' }) {
+                "Block header must be hexadecimal"
+            }
+
+            val header = ByteArray(80) { index ->
+                headerHex.substring(index * 2, index * 2 + 2).toInt(16).toByte()
+            }
+            val firstHash = MessageDigest.getInstance("SHA-256").digest(header)
+            val secondHash = MessageDigest.getInstance("SHA-256").digest(firstHash)
+            return secondHash.reversedArray().joinToString("") { "%02x".format(it) }
+        }
+
+        /**
+         * Match height zero to a profile. MEWC's official block ID is X16R-derived, so its raw
+         * serialized genesis header is pinned instead of comparing a double-SHA header hash.
+         */
+        internal fun genesisHeaderMatchesProfile(
+            profile: CoinProfile,
+            headerHex: String
+        ): Boolean {
+            if (profile.id == CoinRegistry.MEWC.id) {
+                return headerHex.equals(MEWC_GENESIS_HEADER_HEX, ignoreCase = true)
+            }
+            return runCatching {
+                genesisHashFromHeader(headerHex) == profile.genesisHash
+            }.getOrDefault(false)
+        }
     }
+
+    /** Compatibility overload for callers that supplied only a coroutine scope. */
+    constructor(legacyScope: CoroutineScope) : this(CoinRegistry.MEWC, legacyScope)
 
     private val gson = Gson()
     private val requestId = AtomicInteger(0)
@@ -56,7 +105,7 @@ class ElectrumClient(
     private val _serverInfo = MutableStateFlow<ServerInfo?>(null)
     val serverInfo: StateFlow<ServerInfo?> = _serverInfo.asStateFlow()
 
-    private var currentServer: MeowcoinNetwork.ElectrumServer? = null
+    private var currentServer: ElectrumEndpoint? = null
 
     enum class ConnectionState {
         DISCONNECTED,
@@ -78,28 +127,23 @@ class ElectrumClient(
     // ═══════════════════════════════════════════
 
     /**
-     * Connect to the best available Electrum server.
-     * Tries all known servers and connects to the first one that responds.
+     * Connect to the first trusted TLS Electrum server in the active coin profile.
+     * Plaintext is never used as an automatic fallback.
      */
     suspend fun connect(): Boolean {
         if (_connectionState.value == ConnectionState.CONNECTED) return true
 
         _connectionState.value = ConnectionState.CONNECTING
 
-        for (server in MeowcoinNetwork.ELECTRUM_SERVERS) {
-            try {
-                Log.d(TAG, "Trying ${server.host}:${server.sslPort} (SSL)...")
-                if (connectToServer(server, useSSL = true)) return true
-            } catch (e: Exception) {
-                Log.w(TAG, "SSL failed for ${server.host}: ${e.message}")
+        for (server in profile.electrumServers) {
+            val sslPort = server.sslPort
+            if (sslPort == null) {
+                Log.w(TAG, "Skipping ${server.host}: profile has no TLS port")
+                continue
             }
 
-            try {
-                Log.d(TAG, "Trying ${server.host}:${server.tcpPort} (TCP)...")
-                if (connectToServer(server, useSSL = false)) return true
-            } catch (e: Exception) {
-                Log.w(TAG, "TCP failed for ${server.host}: ${e.message}")
-            }
+            Log.d(TAG, "Trying ${server.host}:$sslPort (TLS)...")
+            if (connectToServer(server, useSSL = true)) return true
         }
 
         Log.e(TAG, "Could not connect to any Electrum server")
@@ -111,29 +155,33 @@ class ElectrumClient(
      * Connect to a specific custom server.
      */
     suspend fun connectToCustomServer(host: String, port: Int, useSSL: Boolean = true): Boolean {
-        val server = MeowcoinNetwork.ElectrumServer(
+        require(host.isNotBlank()) { "Host must not be blank" }
+        require(port in 1..65535) { "Port must be between 1 and 65535" }
+        val server = ElectrumEndpoint(
             host = host,
-            tcpPort = if (useSSL) port else port,
-            sslPort = if (useSSL) port else port
+            tcpPort = if (useSSL) null else port,
+            sslPort = if (useSSL) port else null
         )
         return connectToServer(server, useSSL)
     }
 
     private suspend fun connectToServer(
-        server: MeowcoinNetwork.ElectrumServer,
+        server: ElectrumEndpoint,
         useSSL: Boolean
     ): Boolean = withContext(Dispatchers.IO) {
         try {
-            val port = if (useSSL) server.sslPort else server.tcpPort
+            val port = (if (useSSL) server.sslPort else server.tcpPort)
+                ?: throw IllegalArgumentException(
+                    "${if (useSSL) "TLS" else "TCP"} port is not configured for ${server.host}"
+                )
             val socket = if (useSSL) {
-                SSLSocketFactory.getDefault().createSocket().apply {
-                    connect(InetSocketAddress(server.host, port), CONNECT_TIMEOUT_MS)
+                createVerifiedTlsSocket(server.host, port).apply {
                     // Keep subscription reads open while the server is idle.
                     // Individual JSON-RPC calls are bounded in request().
                     soTimeout = 0
                 }
             } else {
-                java.net.Socket().apply {
+                Socket().apply {
                     connect(InetSocketAddress(server.host, port), CONNECT_TIMEOUT_MS)
                     soTimeout = 0
                 }
@@ -155,6 +203,15 @@ class ElectrumClient(
             val serverVersion = versionArray[0].asString
             val protocolVersion = versionArray[1].asString
 
+            // An authenticated hostname can still serve another chain. Pin the profile to the
+            // chain's immutable genesis header before trusting balances or transactions.
+            val genesisHeader = request("blockchain.block.header", listOf(0)).asString
+            if (!genesisHeaderMatchesProfile(profile, genesisHeader)) {
+                throw ElectrumException(
+                    "Wrong chain or malformed genesis header from ${server.host} for ${profile.ticker}"
+                )
+            }
+
             currentServer = server
             _connectionState.value = ConnectionState.CONNECTED
             _serverInfo.value = ServerInfo(
@@ -169,6 +226,23 @@ class ElectrumClient(
             Log.e(TAG, "Connection failed: ${e.message}")
             disconnect()
             false
+        }
+    }
+
+    private fun createVerifiedTlsSocket(host: String, port: Int): SSLSocket {
+        val rawSocket = Socket()
+        try {
+            rawSocket.connect(InetSocketAddress(host, port), CONNECT_TIMEOUT_MS)
+            val sslSocket = (SSLSocketFactory.getDefault() as SSLSocketFactory)
+                .createSocket(rawSocket, host, port, true) as SSLSocket
+            sslSocket.sslParameters = sslSocket.sslParameters.apply {
+                endpointIdentificationAlgorithm = "HTTPS"
+            }
+            sslSocket.startHandshake()
+            return sslSocket
+        } catch (e: Exception) {
+            rawSocket.close()
+            throw e
         }
     }
 
@@ -415,7 +489,8 @@ class ElectrumClient(
 
     /**
      * Get the Merkle proof for a transaction in a block.
-     * Used for SPV verification.
+     * The proof is returned as server data; this client does not validate it against a verified
+     * header chain.
      */
     suspend fun getMerkleProof(txId: String, height: Int): MerkleProof {
         val result = request("blockchain.transaction.get_merkle", listOf(txId, height))
@@ -468,13 +543,13 @@ class ElectrumClient(
     // ═══════════════════════════════════════════
 
     /**
-     * Convert a Meowcoin address to an Electrum scripthash.
+     * Convert an address for the active coin profile to an Electrum scripthash.
      * Electrum uses reversed SHA-256 of the scriptPubKey, so the script must match the
      * address type — P2PKH, P2SH, or post-APEX SegWit/Taproot bech32.
      */
     fun addressToScriptHash(address: String): String {
-        val scriptPubKey = com.meowcoin.wallet.crypto.MeowcoinAddress.toScriptPubKey(address)
-        val sha256 = java.security.MessageDigest.getInstance("SHA-256").digest(scriptPubKey)
+        val scriptPubKey = MeowcoinAddress.toScriptPubKey(address, profile)
+        val sha256 = MessageDigest.getInstance("SHA-256").digest(scriptPubKey)
         return sha256.reversedArray().joinToString("") { "%02x".format(it) }
     }
 

@@ -1,5 +1,6 @@
 package com.meowcoin.wallet.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,21 +21,55 @@ import com.meowcoin.wallet.ui.theme.MeowRed
 @Composable
 fun SendScreen(
     balance: String,
-    onSend: (address: String, amount: String) -> Unit,
+    onSend: (address: String, amount: String, sendAll: Boolean) -> Unit,
     onScanQR: () -> Unit,
     onBack: () -> Unit,
+    coinName: String = "Meowcoin",
+    ticker: String = "MEWC",
+    addressPlaceholder: String = "",
+    estimatedFee: String = "",
+    scannedPayment: String? = null,
+    scannedPaymentAmount: String? = null,
+    previewAddress: String? = null,
+    previewNetwork: String? = null,
+    previewDestinationType: String? = null,
+    previewNetworkTagged: Boolean = false,
+    previewAmount: String? = null,
+    previewFee: String? = null,
+    onConfirmSend: () -> Unit = {},
+    onCancelSend: () -> Unit = {},
     isSending: Boolean = false,
     errorMessage: String? = null,
     successTxId: String? = null
 ) {
     var recipientAddress by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
-    var showConfirmDialog by remember { mutableStateOf(false) }
+    var sendAll by remember { mutableStateOf(false) }
+
+    LaunchedEffect(scannedPayment) {
+        val scanned = scannedPayment?.trim().orEmpty()
+        if (scanned.isEmpty()) return@LaunchedEffect
+
+        // Keep the complete, coin-tagged URI. The final repository boundary must retain this
+        // provenance instead of reinterpreting an ambiguous Base58 payload as a raw address.
+        recipientAddress = scanned
+        if (!scannedPaymentAmount.isNullOrEmpty()) {
+            amount = scannedPaymentAmount
+            sendAll = false
+        }
+    }
+
+    BackHandler(enabled = isSending || previewAddress != null) {
+        if (!isSending) {
+            onCancelSend()
+            onBack()
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Send MEWC", fontWeight = FontWeight.Bold) },
+                title = { Text("Send $ticker", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -74,7 +109,7 @@ fun SendScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        "$balance MEWC",
+                        "$balance $ticker",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MeowOrange
@@ -87,7 +122,9 @@ fun SendScreen(
                 value = recipientAddress,
                 onValueChange = { recipientAddress = it },
                 label = { Text("Recipient Address") },
-                placeholder = { Text("M...") },
+                placeholder = {
+                    Text(addressPlaceholder.ifBlank { "$coinName address" })
+                },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 trailingIcon = {
@@ -112,15 +149,19 @@ fun SendScreen(
                     // Only allow valid numeric input
                     if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d{0,8}$"))) {
                         amount = newValue
+                        sendAll = false
                     }
                 },
-                label = { Text("Amount (MEWC)") },
+                label = { Text("Amount ($ticker)") },
                 placeholder = { Text("0.00000000") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 trailingIcon = {
-                    TextButton(onClick = { amount = balance }) {
+                    TextButton(onClick = {
+                        amount = balance
+                        sendAll = true
+                    }) {
                         Text("MAX", color = MeowOrange)
                     }
                 },
@@ -131,12 +172,13 @@ fun SendScreen(
             )
 
             // Fee estimate
-            val estimatedFee = "~0.00010000 MEWC"
-            Text(
-                text = "Estimated fee: $estimatedFee",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            if (estimatedFee.isNotEmpty()) {
+                Text(
+                    text = "Estimated fee: $estimatedFee",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -192,7 +234,7 @@ fun SendScreen(
 
             // Send Button
             Button(
-                onClick = { showConfirmDialog = true },
+                onClick = { onSend(recipientAddress, amount, sendAll) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -209,7 +251,7 @@ fun SendScreen(
                     Icon(Icons.Default.Send, "Send", modifier = Modifier.size(20.dp))
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        "Send MEWC",
+                        "Send $ticker",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -219,34 +261,46 @@ fun SendScreen(
     }
 
     // Confirmation dialog
-    if (showConfirmDialog) {
+    if (previewAddress != null && previewAmount != null && previewFee != null) {
         AlertDialog(
-            onDismissRequest = { showConfirmDialog = false },
+            onDismissRequest = { if (!isSending) onCancelSend() },
             title = { Text("Confirm Transaction") },
             text = {
-                Column {
-                    Text("Send $amount MEWC to:")
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    previewNetwork?.let { network ->
+                        Text("Network: $network", fontWeight = FontWeight.Bold)
+                    }
+                    previewDestinationType?.let { addressType ->
+                        Text("Address type: $addressType")
+                    }
+                    if (previewNetworkTagged) {
+                        Text(
+                            "Network-tagged payment request",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    Text("Send $previewAmount $ticker to:")
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        recipientAddress,
+                        previewAddress,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    Text("Network fee: $previewFee $ticker", fontWeight = FontWeight.SemiBold)
                 }
             },
             confirmButton = {
                 Button(
-                    onClick = {
-                        showConfirmDialog = false
-                        onSend(recipientAddress, amount)
-                    },
+                    onClick = onConfirmSend,
+                    enabled = !isSending,
                     colors = ButtonDefaults.buttonColors(containerColor = MeowOrange)
                 ) {
-                    Text("Confirm")
+                    Text(if (isSending) "Broadcasting..." else "Confirm and Broadcast")
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showConfirmDialog = false }) {
+                TextButton(onClick = onCancelSend, enabled = !isSending) {
                     Text("Cancel")
                 }
             }

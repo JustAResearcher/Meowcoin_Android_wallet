@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.meowcoin.wallet.BuildConfig
 import com.meowcoin.wallet.data.local.WalletEntity
 import com.meowcoin.wallet.data.remote.ElectrumClient
 import com.meowcoin.wallet.data.repository.WalletRepository
@@ -24,6 +25,8 @@ import com.meowcoin.wallet.viewmodel.ConsolidationUiState
 @Composable
 fun SettingsScreen(
     address: String,
+    coinName: String = "Meowcoin",
+    ticker: String = "MEWC",
     wif: String?,
     seedPhrase: String?,
     isHdWallet: Boolean,
@@ -83,7 +86,7 @@ fun SettingsScreen(
         ) {
             // ── Network / Electrum Status ──
             Text(
-                "Network (Light Client)",
+                "$coinName Network",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -128,7 +131,7 @@ fun SettingsScreen(
                         SettingRow("Version", serverVersion)
                         SettingRow("Block Height", if (blockHeight > 0) blockHeight.toString() else "—")
                         SettingRow("Protocol", "Electrum (Stratum)")
-                        SettingRow("Client Mode", "SPV Light Client")
+                        SettingRow("Client Mode", "Electrum light client")
                     }
 
                     Spacer(Modifier.height(12.dp))
@@ -212,7 +215,7 @@ fun SettingsScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     SettingRow("Address", "${address.take(12)}...${address.takeLast(8)}")
-                    SettingRow("Network", "Meowcoin Mainnet")
+                    SettingRow("Network", "$coinName Mainnet")
                     SettingRow("Address Type", "P2PKH (Legacy)")
                     SettingRow("Wallet Type", if (isHdWallet) "HD (BIP44)" else "Single Key")
                     if (isHdWallet) {
@@ -467,7 +470,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                "Meowcoin Wallet v1.0.8",
+                "Multi-Coin Wallet v${BuildConfig.VERSION_NAME}",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -526,15 +529,15 @@ fun SettingsScreen(
                             SettingRow("Inputs", preview.inputCount.toString())
                             SettingRow(
                                 "Total",
-                                "${WalletRepository.formatMEWC(preview.totalInput)} MEWC"
+                                "${WalletRepository.formatMEWC(preview.totalInput)} $ticker"
                             )
                             SettingRow(
                                 "Estimated fee",
-                                "${WalletRepository.formatMEWC(preview.estimatedFee)} MEWC"
+                                "${WalletRepository.formatMEWC(preview.estimatedFee)} $ticker"
                             )
                             SettingRow(
                                 "New output",
-                                "${WalletRepository.formatMEWC(preview.outputAmount)} MEWC"
+                                "${WalletRepository.formatMEWC(preview.outputAmount)} $ticker"
                             )
                             SettingRow(
                                 "UTXOs after confirmation",
@@ -658,6 +661,13 @@ fun SettingsScreen(
                             onCheckedChange = { customSSL = it }
                         )
                         Text("Use SSL/TLS", style = MaterialTheme.typography.bodyMedium)
+                    }
+                    if (!customSSL) {
+                        Text(
+                            "Warning: plaintext servers can read and alter wallet traffic.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MeowRed
+                        )
                     }
                 }
             },

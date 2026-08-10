@@ -38,6 +38,7 @@ import com.meowcoin.wallet.ui.theme.MeowRed
 fun BalanceCard(
     balance: String,
     fiatBalance: String = "",
+    ticker: String = "MEWC",
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -60,7 +61,7 @@ fun BalanceCard(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "$balance MEWC",
+                text = "$balance $ticker",
                 style = MaterialTheme.typography.displayLarge.copy(
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold
@@ -240,11 +241,12 @@ fun TransactionItem(
     address: String,
     timestamp: String,
     status: String,
+    ticker: String = "MEWC",
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isReceived = amount > 0
-    val amountMEWC = "%.4f".format(kotlin.math.abs(amount) / 100_000_000.0)
+    val formattedAmount = "%.4f".format(kotlin.math.abs(amount) / 100_000_000.0)
 
     Card(
         modifier = modifier
@@ -306,13 +308,13 @@ fun TransactionItem(
             // Amount
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = "${if (isReceived) "+" else "-"}$amountMEWC",
+                    text = "${if (isReceived) "+" else "-"}$formattedAmount",
                     style = MaterialTheme.typography.titleMedium,
                     color = if (isReceived) MeowGreen else MeowRed,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "MEWC",
+                    text = ticker,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -335,6 +337,8 @@ fun TransactionItem(
 fun AddressDisplay(
     address: String,
     showQR: Boolean = false,
+    qrContent: String = address,
+    copyContent: String = address,
     modifier: Modifier = Modifier
 ) {
     val clipboardManager = LocalClipboardManager.current
@@ -345,7 +349,7 @@ fun AddressDisplay(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (showQR) {
-            val qrBitmap = remember(address) { generateQRCode(address, 256) }
+            val qrBitmap = remember(qrContent) { generateQRCode(qrContent, 256) }
             qrBitmap?.let { bitmap ->
                 Card(
                     shape = RoundedCornerShape(16.dp),
@@ -373,7 +377,7 @@ fun AddressDisplay(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        clipboardManager.setText(AnnotatedString(address))
+                        clipboardManager.setText(AnnotatedString(copyContent))
                         copied = true
                     }
                     .padding(16.dp),

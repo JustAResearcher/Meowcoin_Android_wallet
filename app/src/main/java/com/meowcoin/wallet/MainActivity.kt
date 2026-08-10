@@ -1,6 +1,7 @@
 package com.meowcoin.wallet
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.meowcoin.wallet.crypto.BiometricHelper
 import com.meowcoin.wallet.ui.navigation.MeowcoinNavHost
@@ -20,6 +24,7 @@ import com.meowcoin.wallet.viewmodel.WalletViewModel
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         enableEdgeToEdge()
         setContent {
             MeowcoinWalletTheme {
@@ -30,13 +35,38 @@ class MainActivity : FragmentActivity() {
                         uiState.biometricEnabled &&
                         biometricHelper.isBiometricAvailable()
                 var unlocked by remember { mutableStateOf(!needsBiometric) }
+                val lifecycleOwner = LocalLifecycleOwner.current
+                var isForeground by remember {
+                    mutableStateOf(
+                        lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
+                    )
+                }
 
-                // Prompt biometric on first composition when needed
+                DisposableEffect(lifecycleOwner, needsBiometric) {
+                    val observer = LifecycleEventObserver { _, event ->
+                        when (event) {
+                            Lifecycle.Event.ON_START -> isForeground = true
+                            Lifecycle.Event.ON_STOP -> {
+                                isForeground = false
+                                if (needsBiometric) unlocked = false
+                            }
+                            else -> Unit
+                        }
+                    }
+                    lifecycleOwner.lifecycle.addObserver(observer)
+                    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+                }
+
                 LaunchedEffect(needsBiometric) {
-                    if (needsBiometric && !unlocked) {
+                    if (needsBiometric) unlocked = false else unlocked = true
+                }
+
+                // Prompt when first opened and whenever the app returns from the background.
+                LaunchedEffect(needsBiometric, unlocked, isForeground) {
+                    if (needsBiometric && !unlocked && isForeground) {
                         biometricHelper.authenticate(
                             activity = this@MainActivity,
-                            title = "Unlock Meowcoin Wallet",
+                            title = "Unlock Wallet",
                             subtitle = "Authenticate to access your wallet",
                             negativeButtonText = "Cancel",
                             onSuccess = { unlocked = true },
@@ -59,7 +89,7 @@ class MainActivity : FragmentActivity() {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                "Meowcoin Wallet",
+                                "Multi-Coin Wallet",
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold
                             )
@@ -69,7 +99,7 @@ class MainActivity : FragmentActivity() {
                             Button(onClick = {
                                 biometricHelper.authenticate(
                                     activity = this@MainActivity,
-                                    title = "Unlock Meowcoin Wallet",
+                                    title = "Unlock Wallet",
                                     subtitle = "Authenticate to access your wallet",
                                     negativeButtonText = "Cancel",
                                     onSuccess = { unlocked = true },

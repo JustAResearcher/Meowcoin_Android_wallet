@@ -1,19 +1,20 @@
-# 🐱 Meowcoin Wallet for Android
+# 🐱 Multi-Coin Wallet for Android
 
-A lightweight, open-source Android wallet for **Meowcoin (MEWC)** — a community-driven cryptocurrency forked from Ravencoin.
+A lightweight, open-source Android wallet for transparent Bitcoin-family payments. Meowcoin remains the home network and retains its asset and Ash Cats features.
 
-This wallet connects directly to Electrum servers using the **Stratum protocol**, so it works as an **SPV light client**. You don't need to download the full blockchain — just install and go.
+Operational Phase 1 networks are **Meowcoin, Bitcoin, Litecoin, Dogecoin, and Pepecoin**. DigiByte, Viacoin, and Junkcoin profiles are included but disabled until each has two independent production TLS Electrum backends. Litecoin MWEB is not supported.
 
 ---
 
 ## Features
 
-- **Send & Receive MEWC** — Scan QR codes or paste addresses
-- **Light Client (SPV)** — Connects to Electrum servers, no full node required
+- **Send & Receive** — MEWC, BTC, LTC, DOGE, and PEP with coin-specific QR/payment URIs
+- **HD Multi-Coin Wallet** — One BIP39 recovery phrase with registered BIP44 paths, plus BIP84 native SegWit receiving for MEWC and LTC
+- **Electrum Light Client** — TLS-only automatic endpoints with hostname and genesis-chain checks
 - **Secure Key Storage** — Private keys encrypted with AES-256-GCM via Android Keystore
 - **Real-time Updates** — Subscribes to address and block notifications
 - **Custom Server Support** — Point the wallet at your own Electrum node
-- **Import / Export** — Import existing wallets via WIF private key
+- **Import / Export** — Import an existing MEWC WIF or restore all enabled coins from a recovery phrase
 - **Transaction History** — View all incoming and outgoing transactions
 - **Ash Cats Forge** — Open the mobile Forge with your public address prefilled
 - **Material Design 3** — Clean, modern UI built with Jetpack Compose
@@ -107,8 +108,8 @@ MeowcoinWallet/
 │       │   │   │   └── Navigation.kt      # Screen navigation (NavHost)
 │       │   │   ├── screens/
 │       │   │   │   ├── HomeScreen.kt      # Main wallet view (balance, transactions)
-│       │   │   │   ├── SendScreen.kt      # Send MEWC
-│       │   │   │   ├── ReceiveScreen.kt   # Receive MEWC (QR code + address)
+│       │   │   │   ├── SendScreen.kt      # Multi-coin send + fee confirmation
+│       │   │   │   ├── ReceiveScreen.kt   # Coin-specific QR code + address
 │       │   │   │   ├── WelcomeScreen.kt   # First-run setup
 │       │   │   │   └── SettingsScreen.kt  # Settings & custom server config
 │       │   │   └── theme/
@@ -136,9 +137,9 @@ MeowcoinWallet/
 ### Light Client Architecture
 
 ```
-┌──────────────┐        Stratum (JSON-RPC over TCP/SSL)        ┌─────────────────┐
+┌──────────────┐          Stratum (JSON-RPC over TLS)          ┌─────────────────┐
 │              │  ◄──────────────────────────────────────────►  │   Electrum      │
-│  Meowcoin    │    • blockchain.scripthash.get_balance         │   Server        │
+│  Multi-Coin  │    • blockchain.scripthash.get_balance         │   Server        │
 │  Wallet App  │    • blockchain.scripthash.listunspent         │                 │
 │              │    • blockchain.transaction.broadcast           │  (indexes the   │
 │  (this app)  │    • blockchain.scripthash.subscribe            │   full chain)   │
@@ -146,41 +147,44 @@ MeowcoinWallet/
 └──────────────┘                                                └─────────────────┘
 ```
 
-The wallet **never downloads the full blockchain**. Instead, it asks Electrum servers for only the data it needs:
+The wallet **never downloads the full blockchain**. Instead, it asks the active coin's Electrum servers for only the data it needs:
 
 1. **Balance** — Queries UTXOs for your address
 2. **History** — Fetches transaction list for your address
 3. **Send** — Builds and signs transactions locally, then broadcasts via Electrum
 4. **Real-time** — Subscribes to address and block updates for instant notifications
 
-### Default Electrum Servers
+### Enabled Networks and Default TLS Servers
 
-| Server | TCP Port | SSL Port |
-|--------|----------|----------|
-| `electrs.mewccrypto.com` | 50001 | 50002 |
-| `electrs2.mewccrypto.com` | 50001 | 50002 |
-| `electrs3.meowcoin.org` | 50001 | 50002 |
-| `electrs4.meowcoin.org` | 50001 | 50002 |
-| `electrs5.meowcoin.org` | 50001 | 50002 |
+| Coin | Primary | Secondary |
+|------|---------|-----------|
+| MEWC | `electrs.mewccrypto.com:50002` | `electrs2.mewccrypto.com:50002` |
+| BTC | `blockstream.info:700` | `electrum.jhoenicke.de:50002` |
+| LTC | `ltc.rentonisk.com:50002` | `electrum-ltc.petrkr.net:60002` |
+| DOGE | `dogecoin.stackwallet.com:50022` | `electrum1.cipig.net:20060` |
+| PEP | `electrum.pepecoinservice.org:50002` | `electrum.pepe.tips:50002` |
 
-Servers run [electrs-mewc](https://github.com/Meowcoin-Foundation/electrs-mewc) on protocol 1.4. All endpoints serve SSL on 50002; the client tries SSL first and falls back to TCP/50001 where available.
+Automatic connections never fall back to plaintext. A custom plaintext server remains an explicit advanced-user choice in **Settings**.
 
-You can configure a custom server in **Settings** if you run your own node.
+This is a server-trusting light client, not a fully validating SPV node: TLS authenticates the host and the client rejects a server on the wrong genesis chain, but it does not validate the complete header chain or prove that a server has not omitted history. Configure your own server in **Settings** when stronger backend control is required.
 
 ---
 
 ## Key Technical Details
 
-| Parameter | Value |
-|-----------|-------|
-| **Curve** | secp256k1 (same as Bitcoin) |
-| **Address Version** | 50 (0x32) → addresses start with **M** |
-| **WIF Version** | 112 (0x70) |
-| **P2SH Version** | 122 (0x7A) → addresses start with **m** |
-| **BIP44 Coin Type** | 1669 |
-| **Block Time** | 60 seconds |
-| **P2P Port** | 8788 |
-| **Magic Bytes** | `M E W C` (0x4D454743) |
+| Coin | Coin type | P2PKH | P2SH | WIF | Default HD receive type |
+|------|-----------|-------|------|-----|-------------------------|
+| MEWC | 1669 | 50 | 122 | 112 | BIP84 P2WPKH (`mewc1q…`) |
+| BTC | 0 | 0 | 5 | 128 | BIP44 P2PKH |
+| LTC | 2 | 48 | 50 (accept 5) | 176 | BIP84 P2WPKH (`ltc1q…`), no MWEB |
+| DOGE | 3 | 30 | 22 | 158 | BIP44 P2PKH |
+| PEP | 3434 | 56 | 22 | 158 | BIP44 P2PKH |
+
+MEWC and LTC preserve and scan their legacy `m/44'/coin_type'/0'/0|1/index` branches, while new receive and change addresses use `m/84'/coin_type'/0'/0|1/index`. Wallet-owned P2PKH and native P2WPKH inputs can be spent together; native inputs use BIP143 signing and witness-aware fee calculation. Litecoin support remains transparent-only and deliberately rejects MWEB transaction serialization.
+
+Bare Base58 strings do not identify their originating chain. If a raw address maps to different script types in registered profiles—notably Meowcoin P2PKH versus Litecoin P2SH at version 50—the send flow blocks it and requires a matching `meowcoin:` or `litecoin:` payment URI. The final confirmation repeats the network and interpreted address type. New `mewc1q…` and `ltc1q…` receive addresses carry distinct Bech32 network prefixes and avoid that collision.
+
+Restoring the BIP39 phrase scans both receive and change branches for BIP44 and, on MEWC/LTC, BIP84 with a gap limit of 20. Keep an accurate offline copy of the phrase; encrypted on-device storage and Electrum servers are not backups.
 
 ---
 
@@ -211,15 +215,16 @@ Contributions are welcome! Here's how to help:
 
 ### Ideas for Contributions
 
-- [ ] BIP39 mnemonic seed phrase generation
-- [ ] HD wallet (BIP44 key derivation)
-- [ ] Multi-wallet support
-- [ ] Meowcoin asset support (tokens on the MEWC chain)
-- [ ] Fiat price display
+- [x] BIP39 mnemonic seed phrase generation
+- [x] HD wallet (coin-specific BIP44 key derivation)
+- [x] Native SegWit BIP84 receive/change and BIP143 spending for MEWC/LTC
+- [x] Coin-scoped wallet storage
+- [x] Meowcoin asset support (tokens on the MEWC chain)
+- [x] Fiat price display for MEWC
 - [ ] Dark/light theme toggle
 - [ ] Widget for home screen balance
 - [ ] Localization (translations)
-- [ ] Unit tests for crypto layer
+- [x] Unit tests for amount, profile, URI, address, HD, transaction, and network helpers
 - [ ] CI/CD with GitHub Actions
 
 ---
@@ -228,6 +233,11 @@ Contributions are welcome! Here's how to help:
 
 - **Private keys never leave the device.** They're encrypted at rest using AES-256-GCM backed by Android Keystore hardware.
 - **Transactions are signed locally.** The Electrum server only sees the final signed transaction, never your keys.
+- **Previous outputs are verified before signing.** Values and scripts returned by Electrum must match the raw transaction and txid.
+- **Fees require confirmation.** The exact signed amount and bounded fee are shown before broadcast.
+- **Coin data is isolated.** Addresses, private keys, transactions, and UTXOs are scoped by a stable coin ID.
+- **Secrets are screen-capture protected.** The app re-locks biometric wallets after backgrounding and uses Android's secure-window flag.
+- **Electrum servers are trusted for completeness.** Genesis pinning prevents an accidental wrong-chain connection but is not full consensus verification.
 - **Cloud backup is disabled** (`android:allowBackup="false"`) to prevent key leakage.
 - **This is experimental software.** Use at your own risk. Start with small amounts.
 
