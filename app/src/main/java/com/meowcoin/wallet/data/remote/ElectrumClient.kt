@@ -35,7 +35,7 @@ import javax.net.ssl.SSLSocketFactory
  */
 class ElectrumClient(
     private val profile: CoinProfile = CoinRegistry.MEWC,
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 ) {
     companion object {
         private const val TAG = "ElectrumClient"
@@ -88,6 +88,10 @@ class ElectrumClient(
 
     private val gson = Gson()
     private val requestId = AtomicInteger(0)
+    private val clientJob = SupervisorJob(scope.coroutineContext[Job])
+    private val clientScope = CoroutineScope(scope.coroutineContext + clientJob)
+    @Volatile
+    private var reconnectEnabled = false
 
     // Pending requests waiting for a response
     private val pendingRequests = ConcurrentHashMap<Int, CompletableDeferred<JsonElement>>()
@@ -98,6 +102,7 @@ class ElectrumClient(
     private var writer: PrintWriter? = null
     private var reader: BufferedReader? = null
     private var readerJob: Job? = null
+    private var reconnectJob: Job? = null
 
     private val _connectionState = MutableStateFlow(ConnectionState.DISCONNECTED)
     val connectionState: StateFlow<ConnectionState> = _connectionState.asStateFlow()
@@ -131,8 +136,10 @@ class ElectrumClient(
      * Plaintext is never used as an automatic fallback.
      */
     suspend fun connect(): Boolean {
+        if (!clientJob.isActive) return false
         if (_connectionState.value == ConnectionState.CONNECTED) return true
 
+        reconnectEnabled = true
         _connectionState.value = ConnectionState.CONNECTING
 
         for (server in profile.electrumServers) {
@@ -157,6 +164,8 @@ class ElectrumClient(
     suspend fun connectToCustomServer(host: String, port: Int, useSSL: Boolean = true): Boolean {
         require(host.isNotBlank()) { "Host must not be blank" }
         require(port in 1..65535) { "Port must be between 1 and 65535" }
+        if (!clientJob.isActive) return false
+        reconnectEnabled = true
         val server = ElectrumEndpoint(
             host = host,
             tcpPort = if (useSSL) null else port,
@@ -191,7 +200,7 @@ class ElectrumClient(
             reader = BufferedReader(InputStreamReader(socket.getInputStream()))
 
             // Start reading responses in background
-            readerJob = scope.launch { readLoop() }
+            readerJob = clientScope.launch { readLoop() }
 
             // Negotiate protocol version
             val versionResult = request(
@@ -222,9 +231,12 @@ class ElectrumClient(
 
             Log.i(TAG, "Connected to ${server.host}:$port ($serverVersion, protocol $protocolVersion)")
             true
+        } catch (e: CancellationException) {
+            disconnectAfterFailure()
+            throw e
         } catch (e: Exception) {
             Log.e(TAG, "Connection failed: ${e.message}")
-            disconnect()
+            disconnectAfterFailure()
             false
         }
     }
@@ -250,11 +262,50 @@ class ElectrumClient(
      * Disconnect from the current server.
      */
     fun disconnect() {
+        reconnectEnabled = false
+        reconnectJob?.cancel()
+        reconnectJob = null
+        val resources = detachConnection()
+        clientScope.launch(Dispatchers.IO) { closeResources(resources) }
+    }
+
+    /** Permanently close this client and wait for its reader/reconnect jobs to stop. */
+    suspend fun close() {
+        reconnectEnabled = false
+        reconnectJob?.cancel()
+        reconnectJob = null
+        val resources = detachConnection()
+        withContext(NonCancellable + Dispatchers.IO) { closeResources(resources) }
+        withContext(NonCancellable) { clientJob.cancelAndJoin() }
+    }
+
+    /** Non-blocking permanent shutdown for lifecycle callbacks that cannot suspend. */
+    fun shutdown() {
+        reconnectEnabled = false
+        reconnectJob?.cancel()
+        reconnectJob = null
+        val resources = detachConnection()
+        clientScope.launch(Dispatchers.IO) {
+            closeResources(resources)
+            clientJob.cancel()
+        }
+    }
+
+    private suspend fun disconnectAfterFailure() {
+        val resources = detachConnection()
+        withContext(NonCancellable + Dispatchers.IO) { closeResources(resources) }
+    }
+
+    private data class ConnectionResources(
+        val writer: PrintWriter?,
+        val reader: BufferedReader?
+    )
+
+    private fun detachConnection(): ConnectionResources {
         readerJob?.cancel()
         readerJob = null
-        writer?.close()
+        val resources = ConnectionResources(writer, reader)
         writer = null
-        reader?.close()
         reader = null
         pendingRequests.values.forEach {
             it.completeExceptionally(Exception("Disconnected"))
@@ -262,15 +313,32 @@ class ElectrumClient(
         pendingRequests.clear()
         _connectionState.value = ConnectionState.DISCONNECTED
         currentServer = null
+        return resources
+    }
+
+    private fun closeResources(resources: ConnectionResources) {
+        try {
+            resources.writer?.close()
+        } catch (e: Exception) {
+            Log.w(TAG, "Writer close failed during disconnect", e)
+        }
+        try {
+            resources.reader?.close()
+        } catch (e: Exception) {
+            // Socket teardown is best-effort and must never abort coin activation.
+            Log.w(TAG, "Reader close failed during disconnect", e)
+        }
     }
 
     /**
      * Attempt to reconnect after a connection drop.
      */
     suspend fun reconnect(): Boolean {
+        if (!clientJob.isActive || !reconnectEnabled) return false
         _connectionState.value = ConnectionState.RECONNECTING
-        disconnect()
+        disconnectAfterFailure()
         delay(2000) // Brief delay before retry
+        if (!clientJob.isActive || !reconnectEnabled) return false
         return connect()
     }
 
@@ -352,12 +420,15 @@ class ElectrumClient(
         } catch (e: CancellationException) {
             // Normal cancellation
         } catch (e: Exception) {
+            if (!currentCoroutineContext().isActive || !reconnectEnabled || !clientJob.isActive) {
+                return
+            }
             Log.e(TAG, "Read loop error: ${e.message}")
             _connectionState.value = ConnectionState.ERROR
-            // Auto-reconnect
-            scope.launch {
+            reconnectJob?.cancel()
+            reconnectJob = clientScope.launch {
                 delay(5000)
-                reconnect()
+                if (reconnectEnabled && clientJob.isActive) reconnect()
             }
         }
     }

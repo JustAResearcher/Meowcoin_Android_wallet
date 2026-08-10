@@ -1,6 +1,7 @@
 package com.meowcoin.wallet.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.meowcoin.wallet.crypto.AmountCodec
@@ -17,6 +18,7 @@ import com.meowcoin.wallet.data.remote.ElectrumClient
 import com.meowcoin.wallet.data.remote.PriceService
 import com.meowcoin.wallet.data.repository.WalletRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.*
@@ -24,6 +26,10 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 class WalletViewModel(application: Application) : AndroidViewModel(application) {
+
+    companion object {
+        private const val TAG = "WalletViewModel"
+    }
 
     private val database = WalletDatabase.getInstance(application)
     private val secureKeyStore = SecureKeyStore(application)
@@ -114,13 +120,16 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
             activationJob = viewModelScope.launch {
                 try {
                     activateCoin(activeProfile, initializeFromSeed = true, generation = generation)
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
+                    Log.e(TAG, "Failed to activate ${activeProfile.id}", e)
                     if (generation == coinGeneration) {
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
                                 isSwitchingCoin = false,
-                                error = "Coin activation failed: ${e.message}"
+                                error = coinActivationFailure(e)
                             )
                         }
                     }
@@ -179,18 +188,28 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
         activationJob = viewModelScope.launch {
             try {
                 activateCoin(profile, initializeFromSeed = true, generation = generation)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
+                Log.e(TAG, "Failed to activate ${profile.id}", e)
                 if (generation == coinGeneration) {
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             isSwitchingCoin = false,
-                            error = "Coin activation failed: ${e.message}"
+                            error = coinActivationFailure(e)
                         )
                     }
                 }
             }
         }
+    }
+
+    private fun coinActivationFailure(error: Exception): String {
+        val detail = error.message?.takeIf(String::isNotBlank)
+            ?: error.javaClass.simpleName.takeIf(String::isNotBlank)
+            ?: "Unknown error"
+        return "Coin activation failed: $detail"
     }
 
     private suspend fun activateCoin(

@@ -192,13 +192,13 @@ class WalletRepository(
 
     /** Permanently stop this repository instance and wait for notification refreshes to finish. */
     suspend fun close() {
-        electrumClient.disconnect()
+        electrumClient.close()
         repositoryJob.cancelAndJoin()
     }
 
     /** Non-blocking lifecycle shutdown for Activity/ViewModel destruction. */
     fun shutdown() {
-        electrumClient.disconnect()
+        electrumClient.shutdown()
         repositoryJob.cancel()
     }
 

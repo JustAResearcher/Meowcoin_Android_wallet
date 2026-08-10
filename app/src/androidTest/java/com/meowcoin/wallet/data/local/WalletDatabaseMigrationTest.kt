@@ -1,15 +1,25 @@
 package com.meowcoin.wallet.data.local
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.meowcoin.wallet.crypto.Bip32
+import com.meowcoin.wallet.crypto.Bip39
+import com.meowcoin.wallet.crypto.CoinRegistry
+import com.meowcoin.wallet.crypto.HdWallet
+import com.meowcoin.wallet.crypto.SecureKeyStore
+import com.meowcoin.wallet.data.repository.WalletRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -140,6 +150,68 @@ class WalletDatabaseMigrationTest {
             assertEquals("shared-address", cursor.getString(cursor.getColumnIndexOrThrow("address")))
             assertEquals("P2PKH", cursor.getString(cursor.getColumnIndexOrThrow("addressType")))
             assertEquals(44, cursor.getInt(cursor.getColumnIndexOrThrow("derivationPurpose")))
+        }
+    }
+
+    @Test
+    fun upgradedVersion3MeowcoinHdStateInitializesLitecoinAccount() = runBlocking {
+        createVersion3Database()
+        database = Room.databaseBuilder(context, WalletDatabase::class.java, TEST_DATABASE)
+            .addMigrations(WalletDatabase.MIGRATION_3_4, WalletDatabase.MIGRATION_4_5)
+            .allowMainThreadQueries()
+            .build()
+
+        val prefs = encryptedPreferences(context)
+        prefs.edit().clear().commit()
+        val mnemonic =
+            "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon " +
+                "abandon about"
+        prefs.edit()
+            .putString("seed_phrase", mnemonic)
+            .putString("primary_address", "legacy-mewc-address")
+            .putBoolean("is_hd_wallet", true)
+            .putInt("hd_next_receiving_index", 7)
+            .putInt("hd_next_change_index", 3)
+            .commit()
+
+        val keyStore = SecureKeyStore(context)
+        assertEquals("legacy-mewc-address", keyStore.getPrimaryAddress(CoinRegistry.MEWC.id))
+        assertTrue(keyStore.isHdWallet(CoinRegistry.MEWC.id))
+        assertEquals(7, keyStore.getNextReceivingIndex(CoinRegistry.MEWC.id))
+        assertEquals(3, keyStore.getNextChangeIndex(CoinRegistry.MEWC.id))
+
+        val repository = WalletRepository(database!!, keyStore, CoinRegistry.LTC)
+        try {
+            val expectedWallet = HdWallet.fromMnemonic(
+                mnemonic,
+                CoinRegistry.LTC,
+                derivationVersion = Bip39.LEGACY_DERIVATION_VERSION
+            )
+            val expectedLegacy = expectedWallet.deriveReceivingAddress(0, Bip32.BIP44_PURPOSE)
+            val expectedSegwit = expectedWallet.deriveReceivingAddress(0, Bip32.BIP84_PURPOSE)
+
+            assertEquals(expectedLegacy, repository.initializeFromStoredSeedIfNeeded())
+            assertEquals(expectedSegwit, repository.getDefaultReceiveAddress())
+            assertEquals(expectedLegacy, keyStore.getPrimaryAddress(CoinRegistry.LTC.id))
+            assertEquals("legacy-mewc-address", keyStore.getPrimaryAddress(CoinRegistry.MEWC.id))
+            assertEquals(1, keyStore.getNextReceivingIndex(CoinRegistry.LTC.id))
+            assertEquals(1, keyStore.getNextBip84ReceivingIndex(CoinRegistry.LTC.id))
+
+            val litecoinRows = database!!.walletDao().getAllWalletsSync(CoinRegistry.LTC.id)
+            assertEquals(
+                setOf(Bip32.BIP44_PURPOSE, Bip32.BIP84_PURPOSE),
+                litecoinRows.mapTo(mutableSetOf(), WalletEntity::derivationPurpose)
+            )
+            assertEquals(
+                setOf(ADDRESS_TYPE_P2PKH, ADDRESS_TYPE_P2WPKH),
+                litecoinRows.mapTo(mutableSetOf(), WalletEntity::addressType)
+            )
+            litecoinRows.forEach { row ->
+                assertNotNull(keyStore.getPrivateKey(CoinRegistry.LTC.id, row.address))
+            }
+        } finally {
+            repository.close()
+            keyStore.clearAll()
         }
     }
 
@@ -433,6 +505,19 @@ class WalletDatabaseMigrationTest {
             )
             db.version = 4
         }
+    }
+
+    private fun encryptedPreferences(context: Context): SharedPreferences {
+        val masterKey = MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+        return EncryptedSharedPreferences.create(
+            context,
+            "meowcoin_secure_keys",
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
     }
 
     private fun transaction(coinId: String) = TransactionEntity(
