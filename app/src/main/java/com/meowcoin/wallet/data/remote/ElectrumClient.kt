@@ -12,7 +12,10 @@ import com.meowcoin.wallet.crypto.ElectrumEndpoint
 import com.meowcoin.wallet.crypto.MeowcoinAddress
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.BufferedReader
+import java.io.EOFException
 import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.InetSocketAddress
@@ -90,6 +93,7 @@ class ElectrumClient(
     private val requestId = AtomicInteger(0)
     private val clientJob = SupervisorJob(scope.coroutineContext[Job])
     private val clientScope = CoroutineScope(scope.coroutineContext + clientJob)
+    private val recoveryMutex = Mutex()
     @Volatile
     private var reconnectEnabled = false
 
@@ -308,7 +312,7 @@ class ElectrumClient(
         writer = null
         reader = null
         pendingRequests.values.forEach {
-            it.completeExceptionally(Exception("Disconnected"))
+            it.completeExceptionally(ElectrumTransportException("Electrum connection closed"))
         }
         pendingRequests.clear()
         _connectionState.value = ConnectionState.DISCONNECTED
@@ -333,13 +337,52 @@ class ElectrumClient(
     /**
      * Attempt to reconnect after a connection drop.
      */
-    suspend fun reconnect(): Boolean {
-        if (!clientJob.isActive || !reconnectEnabled) return false
+    suspend fun reconnect(): Boolean = recoveryMutex.withLock {
+        if (!clientJob.isActive || !reconnectEnabled) return@withLock false
         _connectionState.value = ConnectionState.RECONNECTING
         disconnectAfterFailure()
         delay(2000) // Brief delay before retry
-        if (!clientJob.isActive || !reconnectEnabled) return false
-        return connect()
+        if (!clientJob.isActive || !reconnectEnabled) return@withLock false
+        connect()
+    }
+
+    /**
+     * Reconnect immediately after a read-only request discovers a stale connection. Profile
+     * servers rotate so one unresponsive backend cannot block transaction preparation. A custom
+     * server is retried because it is the only endpoint the user selected.
+     */
+    private suspend fun recoverReadConnection(
+        failedServer: ElectrumEndpoint?
+    ): Boolean = recoveryMutex.withLock {
+        if (!clientJob.isActive || !reconnectEnabled) return@withLock false
+        if (_connectionState.value == ConnectionState.CONNECTED &&
+            currentServer != null && currentServer != failedServer
+        ) {
+            return@withLock true
+        }
+
+        reconnectJob?.cancel()
+        reconnectJob = null
+        disconnectAfterFailure()
+        _connectionState.value = ConnectionState.RECONNECTING
+
+        val failedProfileIndex = profile.electrumServers.indexOf(failedServer)
+        val targets = when {
+            failedProfileIndex >= 0 -> {
+                val servers = profile.electrumServers
+                servers.drop(failedProfileIndex + 1) + servers.take(failedProfileIndex + 1)
+            }
+            failedServer != null -> listOf(failedServer)
+            else -> profile.electrumServers
+        }
+
+        for (server in targets) {
+            val useSSL = failedProfileIndex >= 0 || server.sslPort != null
+            if (connectToServer(server, useSSL)) return@withLock true
+        }
+
+        _connectionState.value = ConnectionState.ERROR
+        false
     }
 
     // ═══════════════════════════════════════════
@@ -364,17 +407,56 @@ class ElectrumClient(
         val json = gson.toJson(rpcRequest)
         Log.d(TAG, "→ $json")
 
-        withContext(Dispatchers.IO) {
-            writer?.println(json)
-                ?: throw Exception("Not connected")
+        return try {
+            withContext(Dispatchers.IO) {
+                val activeWriter = writer
+                    ?: throw ElectrumTransportException("Electrum is not connected")
+                activeWriter.println(json)
+                if (activeWriter.checkError()) {
+                    throw ElectrumTransportException("Electrum connection write failed")
+                }
+            }
+
+            withTimeoutOrNull(READ_TIMEOUT_MS.toLong()) {
+                deferred.await()
+            } ?: throw ElectrumTransportException(
+                "${profile.ticker} server timed out while handling $method"
+            )
+        } finally {
+            pendingRequests.remove(id, deferred)
+        }
+    }
+
+    private suspend fun requestReadWithRecovery(
+        method: String,
+        params: List<Any>,
+        action: String
+    ): JsonElement {
+        val failedServer = currentServer
+        var firstFailure: ElectrumTransportException? = null
+
+        if (_connectionState.value != ConnectionState.ERROR) {
+            try {
+                return request(method, params)
+            } catch (e: ElectrumTransportException) {
+                firstFailure = e
+            }
+        }
+
+        if (!recoverReadConnection(failedServer)) {
+            throw ElectrumException(
+                "Could not reconnect to a ${profile.ticker} server while $action. Try again.",
+                firstFailure
+            )
         }
 
         return try {
-            withTimeout(READ_TIMEOUT_MS.toLong()) {
-                deferred.await()
-            }
-        } finally {
-            pendingRequests.remove(id, deferred)
+            request(method, params)
+        } catch (e: ElectrumTransportException) {
+            throw ElectrumException(
+                "${profile.ticker} servers stopped responding while $action. Try again.",
+                e
+            )
         }
     }
 
@@ -386,7 +468,7 @@ class ElectrumClient(
             while (currentCoroutineContext().isActive) {
                 val line = withContext(Dispatchers.IO) {
                     reader?.readLine()
-                } ?: break
+                } ?: throw EOFException("Electrum server closed the connection")
 
                 Log.d(TAG, "← $line")
 
@@ -425,6 +507,12 @@ class ElectrumClient(
             }
             Log.e(TAG, "Read loop error: ${e.message}")
             _connectionState.value = ConnectionState.ERROR
+            pendingRequests.values.forEach {
+                it.completeExceptionally(
+                    ElectrumTransportException("Electrum connection was interrupted")
+                )
+            }
+            pendingRequests.clear()
             reconnectJob?.cancel()
             reconnectJob = clientScope.launch {
                 delay(5000)
@@ -529,7 +617,11 @@ class ElectrumClient(
      * Get a raw transaction by its ID.
      */
     suspend fun getTransaction(txId: String, verbose: Boolean = true): JsonElement {
-        return request("blockchain.transaction.get", listOf(txId, verbose))
+        return requestReadWithRecovery(
+            "blockchain.transaction.get",
+            listOf(txId, verbose),
+            "verifying transaction data"
+        )
     }
 
     /**
@@ -652,5 +744,7 @@ class ElectrumClient(
         val pos: Int
     )
 
-    class ElectrumException(message: String) : Exception(message)
+    private class ElectrumTransportException(message: String) : Exception(message)
+
+    class ElectrumException(message: String, cause: Throwable? = null) : Exception(message, cause)
 }

@@ -1,5 +1,16 @@
 # Meowcoin Wallet — Release Notes
 
+## v1.1.2 — Send connection recovery
+
+- Fixes a closed Electrum connection remaining marked connected and causing
+  send preparation to fail with a 30-second timeout.
+- Detects closed sockets and failed writes, reconnects or switches to another
+  configured server, and retries the read-only transaction lookup once.
+- Transaction broadcasts are not automatically retried.
+- Preserves wallet storage, recovery phrases, addresses, and transaction signing.
+
+Install the update over the existing wallet; do not uninstall or clear app data.
+
 ## v1.1.0 — Multi-coin send/receive and native SegWit
 
 - **Five enabled networks.** One BIP39 recovery phrase now provides self-custodial
