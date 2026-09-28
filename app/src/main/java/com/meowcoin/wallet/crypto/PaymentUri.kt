@@ -140,10 +140,10 @@ object PaymentUriCodec {
      * Parses a destination entered on a send screen while retaining whether it came from a
      * coin-tagged payment URI or a bare address.
      *
-     * A Base58Check address has no globally unique network identifier. If the same bare string
-     * maps to different script types in registered profiles, selecting a coin would silently
-     * change its locking script. Such raw input is rejected; a matching coin-specific URI is
-     * required to carry the missing provenance.
+     * A Base58Check address has no globally unique network identifier. The selected send
+     * profile supplies that context and determines the locking script, even when another coin
+     * shares the version byte. Coin-tagged URIs must still match the selected profile, and raw
+     * addresses retain their source so confirmation does not claim they are network-tagged.
      */
     fun parseSendTarget(input: String, profile: CoinProfile): PaymentRequest {
         val trimmed = input.trim()
@@ -156,27 +156,11 @@ object PaymentUriCodec {
         require(MeowcoinAddress.isValid(trimmed, profile)) {
             "Invalid ${profile.ticker} payment address"
         }
-        require(!hasCrossScriptBase58Ambiguity(trimmed)) {
-            "Ambiguous Base58 address: use a ${profile.uriScheme}: payment URI"
-        }
-
         return PaymentRequest(
             profile = profile,
             address = trimmed,
             source = PaymentRequestSource.RAW_ADDRESS
         )
-    }
-
-    private fun hasCrossScriptBase58Ambiguity(address: String): Boolean {
-        val decoded = runCatching { Base58.decodeChecked(address) }.getOrNull() ?: return false
-        if (decoded.second.size != 20) return false
-
-        val scriptTypes = CoinRegistry.all.mapNotNull { candidateProfile ->
-            MeowcoinAddress.parse(address, candidateProfile)?.type?.takeIf {
-                it == MeowcoinAddress.Type.P2PKH || it == MeowcoinAddress.Type.P2SH
-            }
-        }.toSet()
-        return scriptTypes.size > 1
     }
 
     private fun encodeComponent(value: String): String =

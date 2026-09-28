@@ -62,7 +62,7 @@ class PaymentUriTest {
     }
 
     @Test
-    fun rejectsRawBase58AddressWithDifferentScriptMeanings() {
+    fun acceptsRawBase58AddressUsingTheSelectedCoin() {
         val ambiguousAddress = MeowcoinKeyPair.fromPrivateKey(
             "3".padStart(64, '0'),
             CoinRegistry.MEWC
@@ -76,11 +76,63 @@ class PaymentUriTest {
             MeowcoinAddress.Type.P2SH,
             MeowcoinAddress.parse(ambiguousAddress, CoinRegistry.LTC)?.type
         )
-        assertThrows(IllegalArgumentException::class.java) {
-            PaymentUriCodec.parseSendTarget(ambiguousAddress, CoinRegistry.MEWC)
+        for (profile in listOf(CoinRegistry.MEWC, CoinRegistry.LTC)) {
+            val request = PaymentUriCodec.parseSendTarget("  $ambiguousAddress  ", profile)
+
+            assertEquals(profile, request.profile)
+            assertEquals(ambiguousAddress, request.address)
+            assertEquals(PaymentRequestSource.RAW_ADDRESS, request.source)
         }
-        assertThrows(IllegalArgumentException::class.java) {
-            PaymentUriCodec.parseSendTarget(ambiguousAddress, CoinRegistry.LTC)
+    }
+
+    @Test
+    fun sharedBase58PrefixUsesTheSelectedCoinsLockingScript() {
+        val payloadHex = "00112233445566778899aabbccddeeff00112233"
+        val sharedAddress = Base58.encodeChecked(50, payloadHex.hexToBytes())
+        val mewcRequest = PaymentUriCodec.parseSendTarget(sharedAddress, CoinRegistry.MEWC)
+        val ltcRequest = PaymentUriCodec.parseSendTarget(sharedAddress, CoinRegistry.LTC)
+
+        assertEquals(
+            "76a914${payloadHex}88ac",
+            MeowcoinAddress.toScriptPubKey(mewcRequest.address, mewcRequest.profile).toHex()
+        )
+        assertEquals(
+            "a914${payloadHex}87",
+            MeowcoinAddress.toScriptPubKey(ltcRequest.address, ltcRequest.profile).toHex()
+        )
+    }
+
+    @Test
+    fun rejectsInvalidChecksumLengthAndOtherCoinsRawAddresses() {
+        val mewcAddress = MeowcoinKeyPair.fromPrivateKey(
+            "3".padStart(64, '0'), CoinRegistry.MEWC
+        ).toAddress()
+        val invalidChecksum = mewcAddress.dropLast(1) +
+            if (mewcAddress.last() == '1') "2" else "1"
+        val wrongLength = Base58.encodeChecked(50, ByteArray(19))
+        val litecoinSegwit = MeowcoinKeyPair.fromPrivateKey(
+            "3".padStart(64, '0'), CoinRegistry.LTC
+        ).toP2WPKHAddress()
+
+        for (input in listOf("", "  ", invalidChecksum, wrongLength, address, litecoinSegwit)) {
+            assertThrows(IllegalArgumentException::class.java) {
+                PaymentUriCodec.parseSendTarget(input, CoinRegistry.MEWC)
+            }
+        }
+    }
+
+    @Test
+    fun acceptsRawMeowcoinScriptAndSegwitAddresses() {
+        val scriptAddress = Base58.encodeChecked(122, ByteArray(20) { it.toByte() })
+        val segwitAddress = MeowcoinKeyPair.fromPrivateKey(
+            "3".padStart(64, '0'), CoinRegistry.MEWC
+        ).toP2WPKHAddress()
+
+        for (input in listOf(scriptAddress, segwitAddress)) {
+            val request = PaymentUriCodec.parseSendTarget(input, CoinRegistry.MEWC)
+            assertEquals(CoinRegistry.MEWC, request.profile)
+            assertEquals(input, request.address)
+            assertEquals(PaymentRequestSource.RAW_ADDRESS, request.source)
         }
     }
 

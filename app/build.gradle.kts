@@ -27,8 +27,8 @@ android {
         applicationId = "com.meowcoin.wallet"
         minSdk = 26
         targetSdk = 35
-        versionCode = 12
-        versionName = "1.1.2"
+        versionCode = 13
+        versionName = "1.1.3"
         buildConfigField("String", "ASH_CATS_URL", "\"$escapedAshCatsUrl\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

@@ -24,6 +24,41 @@ class TransactionTest {
     }
 
     @Test
+    fun sharedBase58SendTargetProducesTheSelectedCoinsSignedPaymentOutput() {
+        val payloadHex = "00112233445566778899aabbccddeeff00112233"
+        val destination = Base58.encodeChecked(50, payloadHex.hexToBytes())
+
+        for ((profile, expectedScript) in listOf(
+            CoinRegistry.MEWC to "76a914${payloadHex}88ac",
+            CoinRegistry.LTC to "a914${payloadHex}87"
+        )) {
+            val owner = fixedKey(1, profile)
+            val ownerAddress = owner.toAddress()
+            val input = MeowcoinTransaction.UTXO(
+                txHash = "1".padStart(64, '0'),
+                outputIndex = 0,
+                value = 200_000_000_000L,
+                scriptPubKey = MeowcoinAddress.toScriptPubKey(ownerAddress, profile).toHex()
+            )
+            val request = PaymentUriCodec.parseSendTarget(destination, profile)
+            val transaction = MeowcoinTransaction.buildTransaction(
+                keyPair = owner,
+                utxos = listOf(input),
+                outputs = listOf(MeowcoinTransaction.TxOutput(request.address, 100_000_000_000L)),
+                changeAddress = ownerAddress,
+                profile = request.profile
+            )
+            val parsed = RawTransactionParser.parse(transaction.txHex)
+
+            assertEquals(profile.transactionVersion, parsed.version)
+            assertEquals(100_000_000_000L, parsed.outputs.first().value)
+            assertEquals(expectedScript, parsed.outputs.first().scriptPubKeyHex)
+            assertEquals(listOf(input.outPoint), transaction.selectedOutpoints)
+            assertEquals(input.value - transaction.actualFee, parsed.outputs.sumOf { it.value })
+        }
+    }
+
+    @Test
     fun consolidationSpendsTheSuppliedBatch() {
         val inputs = (1..3).map { utxo(it, 100_000_000L) }
 

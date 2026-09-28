@@ -182,7 +182,7 @@ This is a server-trusting light client, not a fully validating SPV node: TLS aut
 
 MEWC and LTC preserve and scan their legacy `m/44'/coin_type'/0'/0|1/index` branches, while new receive and change addresses use `m/84'/coin_type'/0'/0|1/index`. Wallet-owned P2PKH and native P2WPKH inputs can be spent together; native inputs use BIP143 signing and witness-aware fee calculation. Litecoin support remains transparent-only and deliberately rejects MWEB transaction serialization.
 
-Bare Base58 strings do not identify their originating chain. If a raw address maps to different script types in registered profiles—notably Meowcoin P2PKH versus Litecoin P2SH at version 50—the send flow blocks it and requires a matching `meowcoin:` or `litecoin:` payment URI. The final confirmation repeats the network and interpreted address type. New `mewc1q…` and `ltc1q…` receive addresses carry distinct Bech32 network prefixes and avoid that collision.
+Bare Base58 strings do not identify their originating chain. The selected send network determines how a raw address is interpreted, including Meowcoin P2PKH versus Litecoin P2SH at version 50. Valid Meowcoin addresses can be pasted or scanned on the Send MEWC screen without a `meowcoin:` prefix. Coin-specific payment URIs remain supported and must match the selected network. The final confirmation repeats the network and interpreted address type. New `mewc1q…` and `ltc1q…` receive addresses carry distinct Bech32 network prefixes and avoid that collision.
 
 Restoring the BIP39 phrase scans both receive and change branches for BIP44 and, on MEWC/LTC, BIP84 with a gap limit of 20. Keep an accurate offline copy of the phrase; encrypted on-device storage and Electrum servers are not backups.
 

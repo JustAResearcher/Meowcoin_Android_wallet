@@ -1,5 +1,17 @@
 # Meowcoin Wallet — Release Notes
 
+## v1.1.3 — Plain Meowcoin send addresses
+
+- Fixes valid legacy Meowcoin recipient addresses being rejected with
+  "Ambiguous Base58 address: use a meowcoin: payment URI".
+- Plain addresses use the selected send network, so Meowcoin's shared Base58
+  prefix produces a Meowcoin public-key payment on the Send MEWC screen.
+- Coin-specific payment URIs must match the selected network. Invalid
+  checksums, unsupported address formats, and mismatched URI amounts remain
+  rejected, and confirmation displays the network and address type.
+
+Install the update over the existing wallet; do not uninstall or clear app data.
+
 ## v1.1.2 — Send connection recovery
 
 - Fixes a closed Electrum connection remaining marked connected and causing
