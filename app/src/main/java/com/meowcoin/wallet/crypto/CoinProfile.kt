@@ -86,12 +86,14 @@ object CoinRegistry {
         dustThreshold = 100_000L,
         defaultFeeRate = 1_000L,
         genesisHash = "000000edd819220359469c54f2614b5602ebc775ea67a64602f354bdaa320f70",
+        // Preference order: electrs5 and electrs2 answer large mining wallets that the
+        // others refuse with "Too many history entries".
         electrumServers = listOf(
-            ElectrumEndpoint("electrs.mewccrypto.com", 50001, 50002),
+            ElectrumEndpoint("electrs5.meowcoin.org", 50001, 50002),
             ElectrumEndpoint("electrs2.mewccrypto.com", 50001, 50002),
+            ElectrumEndpoint("electrs.mewccrypto.com", 50001, 50002),
             ElectrumEndpoint("electrs3.meowcoin.org", 50001, 50002),
-            ElectrumEndpoint("electrs4.meowcoin.org", 50001, 50002),
-            ElectrumEndpoint("electrs5.meowcoin.org", 50001, 50002)
+            ElectrumEndpoint("electrs4.meowcoin.org", 50001, 50002)
         )
     )
 

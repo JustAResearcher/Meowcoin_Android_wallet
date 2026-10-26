@@ -46,6 +46,7 @@ class ElectrumClient(
         private const val CLIENT_NAME = "MultiCoinAndroidWallet"
         private const val CONNECT_TIMEOUT_MS = 15_000
         private const val READ_TIMEOUT_MS = 30_000
+        private const val HISTORY_LIMIT_ERROR = "Too many history entries"
         private const val MEWC_GENESIS_HEADER_HEX =
             "0400000000000000000000000000000000000000000000000000000000000000" +
                 "0000000090739a9ddd9c782daf939db397a9d21f74a960fea5c398d533842c59f66c91e8" +
@@ -84,6 +85,34 @@ class ElectrumClient(
                 genesisHashFromHeader(headerHex) == profile.genesisHash
             }.getOrDefault(false)
         }
+
+        /**
+         * Read a JSON-RPC error. ElectrumX sends a `{code, message}` object while electrs sends
+         * a bare string; both must complete the pending request instead of leaving it to time out.
+         */
+        internal fun rpcErrorMessage(error: JsonElement): String = when {
+            error.isJsonObject -> error.asJsonObject.get("message")
+                ?.takeIf { it.isJsonPrimitive }?.asString ?: "Unknown error"
+            error.isJsonPrimitive -> error.asString
+            else -> error.toString()
+        }
+
+        /** electrs refuses scripthash queries above its configured history/UTXO limit. */
+        internal fun isHistoryLimitError(message: String?): Boolean =
+            message?.contains(HISTORY_LIMIT_ERROR, ignoreCase = true) == true
+
+        /**
+         * Profile servers to try, in preference order, after [refusedBy] hit its history limit.
+         * A custom server is never left because it is the only endpoint the user selected.
+         */
+        internal fun historyLimitFailoverTargets(
+            servers: List<ElectrumEndpoint>,
+            refusedBy: ElectrumEndpoint,
+            refused: Set<ElectrumEndpoint>
+        ): List<ElectrumEndpoint> {
+            if (refusedBy !in servers) return emptyList()
+            return servers.filter { it.sslPort != null && it != refusedBy && it !in refused }
+        }
     }
 
     /** Compatibility overload for callers that supplied only a coroutine scope. */
@@ -102,6 +131,11 @@ class ElectrumClient(
 
     // Subscription callbacks (method → callback)
     private val subscriptions = ConcurrentHashMap<String, MutableList<(JsonElement) -> Unit>>()
+
+    // Server-side subscriptions to restore after a history-limit server switch
+    private val subscribedScriptHashes = ConcurrentHashMap.newKeySet<String>()
+    @Volatile
+    private var headersSubscribed = false
 
     private var writer: PrintWriter? = null
     private var reader: BufferedReader? = null
@@ -461,6 +495,91 @@ class ElectrumClient(
     }
 
     /**
+     * Run a scripthash query, moving to another profile server when the current one refuses it
+     * for exceeding its history limit. Each server is asked at most once per query.
+     */
+    private suspend fun requestWithHistoryLimitFailover(
+        method: String,
+        params: List<Any>
+    ): JsonElement {
+        val refused = mutableSetOf<ElectrumEndpoint>()
+        while (true) {
+            val server = currentServer
+            try {
+                return request(method, params)
+            } catch (e: ElectrumException) {
+                if (server == null || !isHistoryLimitError(e.message)) throw e
+                refused += server
+                Log.w(TAG, "${server.host} refused $method: ${e.message}")
+                if (!switchAfterHistoryLimit(server, refused)) throw e
+            }
+        }
+    }
+
+    /**
+     * Connect to the most preferred profile server that has not refused the current query.
+     * If none connects, return to [refusedBy] so queries within its limit keep working.
+     */
+    private suspend fun switchAfterHistoryLimit(
+        refusedBy: ElectrumEndpoint,
+        refused: Set<ElectrumEndpoint>
+    ): Boolean = recoveryMutex.withLock {
+        if (!clientJob.isActive || !reconnectEnabled) return@withLock false
+        val active = currentServer
+        if (_connectionState.value == ConnectionState.CONNECTED &&
+            active != null && active !in refused
+        ) {
+            // Another query already moved to a server that has not refused this one.
+            return@withLock true
+        }
+
+        val targets = historyLimitFailoverTargets(profile.electrumServers, refusedBy, refused)
+        if (targets.isEmpty()) return@withLock false
+
+        reconnectJob?.cancel()
+        reconnectJob = null
+        disconnectAfterFailure()
+        _connectionState.value = ConnectionState.RECONNECTING
+
+        for (server in targets) {
+            if (connectToServer(server, useSSL = true)) {
+                restoreSubscriptions()
+                return@withLock true
+            }
+        }
+
+        if (connectToServer(refusedBy, useSSL = true)) {
+            restoreSubscriptions()
+        } else {
+            _connectionState.value = ConnectionState.ERROR
+        }
+        false
+    }
+
+    /** Re-send subscriptions that were registered on the previous connection. */
+    private suspend fun restoreSubscriptions() {
+        try {
+            if (headersSubscribed) {
+                val height = request("blockchain.headers.subscribe").asJsonObject.get("height").asInt
+                _serverInfo.update { it?.copy(blockHeight = height) }
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not restore header subscription: ${e.message}")
+        }
+        for (scriptHash in subscribedScriptHashes) {
+            try {
+                request("blockchain.scripthash.subscribe", listOf(scriptHash))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not restore subscription for $scriptHash: ${e.message}")
+            }
+        }
+    }
+
+    /**
      * Read loop for incoming server messages (responses and notifications).
      */
     private suspend fun readLoop() {
@@ -481,8 +600,7 @@ class ElectrumClient(
                         val deferred = pendingRequests.remove(id)
 
                         if (json.has("error") && !json.get("error").isJsonNull) {
-                            val error = json.getAsJsonObject("error")
-                            val message = error.get("message")?.asString ?: "Unknown error"
+                            val message = rpcErrorMessage(json.get("error"))
                             deferred?.completeExceptionally(ElectrumException(message))
                         } else {
                             deferred?.complete(json.get("result"))
@@ -542,7 +660,10 @@ class ElectrumClient(
      * Get transaction history for a scripthash.
      */
     suspend fun getHistory(scriptHash: String): List<HistoryItem> {
-        val result = request("blockchain.scripthash.get_history", listOf(scriptHash))
+        val result = requestWithHistoryLimitFailover(
+            "blockchain.scripthash.get_history",
+            listOf(scriptHash)
+        )
         return result.asJsonArray.map { item ->
             val obj = item.asJsonObject
             HistoryItem(
@@ -557,7 +678,10 @@ class ElectrumClient(
      * Get unspent transaction outputs for a scripthash.
      */
     suspend fun listUnspent(scriptHash: String): List<UnspentOutput> {
-        val result = request("blockchain.scripthash.listunspent", listOf(scriptHash))
+        val result = requestWithHistoryLimitFailover(
+            "blockchain.scripthash.listunspent",
+            listOf(scriptHash)
+        )
         return result.asJsonArray.map { item ->
             val obj = item.asJsonObject
             UnspentOutput(
@@ -580,7 +704,11 @@ class ElectrumClient(
         subscriptions.getOrPut("blockchain.scripthash.subscribe") { mutableListOf() }
             .add(onUpdate)
 
-        val result = request("blockchain.scripthash.subscribe", listOf(scriptHash))
+        val result = requestWithHistoryLimitFailover(
+            "blockchain.scripthash.subscribe",
+            listOf(scriptHash)
+        )
+        subscribedScriptHashes += scriptHash
         return if (result.isJsonNull) null else result.asString
     }
 
@@ -603,6 +731,7 @@ class ElectrumClient(
             }
 
         val result = request("blockchain.headers.subscribe")
+        headersSubscribed = true
         val obj = result.asJsonObject
         val header = BlockHeader(
             height = obj.get("height").asInt,

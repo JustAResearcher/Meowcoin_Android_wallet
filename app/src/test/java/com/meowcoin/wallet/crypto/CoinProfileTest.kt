@@ -33,6 +33,21 @@ class CoinProfileTest {
     }
 
     @Test
+    fun mewcPrefersElectrumServersThatAnswerLargeWallets() {
+        assertEquals(
+            listOf(
+                "electrs5.meowcoin.org",
+                "electrs2.mewccrypto.com",
+                "electrs.mewccrypto.com",
+                "electrs3.meowcoin.org",
+                "electrs4.meowcoin.org"
+            ),
+            CoinRegistry.MEWC.electrumServers.map { it.host }
+        )
+        assertTrue(CoinRegistry.MEWC.electrumServers.all { it.sslPort == 50002 })
+    }
+
+    @Test
     fun keysUseTheSelectedProfilesAddressAndWifVersions() {
         for (profile in CoinRegistry.all) {
             val key = MeowcoinKeyPair.fromPrivateKey(privateKeyOne, profile)

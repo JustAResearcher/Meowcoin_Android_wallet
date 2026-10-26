@@ -1,6 +1,8 @@
 package com.meowcoin.wallet.data.remote
 
+import com.google.gson.JsonParser
 import com.meowcoin.wallet.crypto.CoinRegistry
+import com.meowcoin.wallet.crypto.ElectrumEndpoint
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -77,6 +79,67 @@ class ElectrumClientTest {
 
         assertFalse(
             ElectrumClient.genesisHeaderMatchesProfile(CoinRegistry.MEWC, changedHeader)
+        )
+    }
+
+    @Test
+    fun `rpc error accepts electrs bare string and ElectrumX object forms`() {
+        assertEquals(
+            "Too many history entries",
+            ElectrumClient.rpcErrorMessage(JsonParser.parseString("\"Too many history entries\""))
+        )
+        assertEquals(
+            "missing inputs",
+            ElectrumClient.rpcErrorMessage(
+                JsonParser.parseString("{\"code\":2,\"message\":\"missing inputs\"}")
+            )
+        )
+        assertEquals(
+            "Unknown error",
+            ElectrumClient.rpcErrorMessage(JsonParser.parseString("{\"code\":1}"))
+        )
+        assertEquals(
+            "Unknown error",
+            ElectrumClient.rpcErrorMessage(JsonParser.parseString("{\"message\":null}"))
+        )
+    }
+
+    @Test
+    fun `history limit error is recognised by message`() {
+        assertTrue(ElectrumClient.isHistoryLimitError("Too many history entries"))
+        assertTrue(ElectrumClient.isHistoryLimitError("too many history entries"))
+        assertFalse(ElectrumClient.isHistoryLimitError("missing inputs"))
+        assertFalse(ElectrumClient.isHistoryLimitError(null))
+    }
+
+    @Test
+    fun `history limit failover keeps preference order and skips refusing servers`() {
+        val servers = CoinRegistry.MEWC.electrumServers
+        val (first, second, third) = servers
+
+        assertEquals(
+            servers - first,
+            ElectrumClient.historyLimitFailoverTargets(servers, first, setOf(first))
+        )
+        assertEquals(
+            listOf(first) + servers.drop(3),
+            ElectrumClient.historyLimitFailoverTargets(servers, third, setOf(second, third))
+        )
+        assertTrue(
+            ElectrumClient.historyLimitFailoverTargets(servers, first, servers.toSet()).isEmpty()
+        )
+    }
+
+    @Test
+    fun `history limit failover never leaves a custom server`() {
+        val custom = ElectrumEndpoint("electrum.example.com", sslPort = 50002)
+
+        assertTrue(
+            ElectrumClient.historyLimitFailoverTargets(
+                CoinRegistry.MEWC.electrumServers,
+                custom,
+                setOf(custom)
+            ).isEmpty()
         )
     }
 }

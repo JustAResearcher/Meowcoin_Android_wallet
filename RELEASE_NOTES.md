@@ -1,5 +1,17 @@
 # Meowcoin Wallet — Release Notes
 
+## v1.1.4 — Large wallet balances
+
+- Fixes balances and history not loading for addresses with many transactions or
+  coins, such as mining payout addresses. Some Electrum servers refuse these with
+  "Too many history entries"; the wallet now moves to another server and retries.
+- MEWC connects to electrs5.meowcoin.org and electrs2.mewccrypto.com first.
+- Server error messages are shown immediately instead of appearing as a
+  30-second timeout.
+- A custom server chosen in Settings is never switched automatically.
+
+Install the update over the existing wallet; do not uninstall or clear app data.
+
 ## v1.1.3 — Plain Meowcoin send addresses
 
 - Fixes valid legacy Meowcoin recipient addresses being rejected with
